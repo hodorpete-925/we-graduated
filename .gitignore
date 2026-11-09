@@ -57,3 +57,7 @@ _tools/
 
 # Paid draft rankings and private draft prep: never published
 2026 Draft/
+
+# Refresh run log and temp files (local only)
+refresh.log
+*.tmp

@@ -18,6 +18,7 @@ import wg_charts as V
 import wg_content as C
 import wg_data as D
 import wg_dynamic as DY
+import wg_features as F
 from wg_template import CSS, FEEDBACK, JS
 
 HERE = Path(__file__).parent
@@ -83,6 +84,14 @@ def collapsible(title, meta, body, open_=False):
 
 EXTRA_CSS = """
 .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+@media (max-width: 720px) {
+  /* Tighter tables on phones so more columns fit before you have to swipe. */
+  .content table.roster { font-size: 13px; }
+  .content table.roster th { padding: 9px 7px; letter-spacing: .06em; font-size: 10px; }
+  .content table.roster td { padding: 9px 7px; }
+  .content table.roster td.num, .content table.roster th.num { white-space: nowrap; }
+  .content table.tl-table td, .content table.tl-table th { padding: 7px 6px; }
+}
 .brand-logo { width: 56px; height: 56px; border-radius: 10px; background: #fff; padding: 4px; margin-bottom: 10px; display: block; }
 .oq-block { border: 1px solid #f0d78c; background: #fffaeb; border-radius: 10px; padding: 18px 22px; margin: 8px 0 28px; }
 .oq-block h2 { margin: 0 0 6px; font-size: 17px; }
@@ -162,8 +171,7 @@ def sec_home(L, generated):
     body += '<div class="viz-grid2">' + V.hbars(pf_rows, "Points for", f"Through week {wk}. Hover for record and points against.", fmt="{:,.0f}", lw=64, W=460)
     body += V.diverging_bars(sorted([(m, v["w"] - v["xw"]) for m, v in luckd.items()], key=lambda r: -r[1]),
                              "Luck so far", "Actual minus all-play expected wins. More on the Luck report.") + "</div>"
-    body += f'<h2>Week {live_wk} scores <span class="note">({status})</span></h2>'
-    body += table(["Team", "Pts", "Pts", "Team"], mu, num=(1, 2))
+    body += F.live_block(L)
     body += f"<h2>{y} standings</h2>" + table(["#", "Team", "Record", "PF", "PA"], st, cls="roster standings", num=(2, 3, 4))
     body += (f'<h2>From the Commissioner</h2><p>Latest: <a href="{C.SUBSTACK}/p/{latest[0]}" target="_blank" rel="noopener">'
              f'{e(latest[1])}</a>. More on the <a href="#" data-target="desk">Commissioner\'s Desk</a>.</p>')
@@ -524,18 +532,19 @@ def sec_positional(L):
     return section("positional", "Positional strength", "Where each team's starting points come from.", body)
 
 
-def sec_search(L):
-    idx = L.player_index()
-    data = json.dumps([{"n": p["n"], "p": p["p"], "t": p["t"], "s": p["s"]} for p in idx], separators=(",", ":"))
-    top = sorted(idx, key=lambda p: -p["t"])[:15]
-    lead = V.hbars([(p["n"], p["t"], f'<b>{e(p["n"])}</b> ({e(p["p"])})<br>{p["t"]:,.0f} pts across {len({x["y"] for x in p["s"]})} seasons on WG rosters')
-                    for p in top], "Most points ever scored on a We Graduated roster", "Rostered weeks only, 2012 on. Search below for anyone else.",
-                   lw=150, W=640)
-    body = lead + """<div class="ps-wrap"><input id="wg-ps" type="search" placeholder="Search any player since 2012" autocomplete="off"></div>
-      <div id="wg-ps-out"></div>
-      <p class="note">Points are counted only for weeks the player was on a roster in this league.</p>
-      <script>window.WG_PLAYERS = """ + data + """;</script>"""
-    return section("player-search", "Player search", "Every player who has been on a We Graduated roster, and who had him when.", body)
+def sec_search(L, C):
+    top = sorted(C.values(), key=lambda p: -p["t"])[:15]
+    lead = V.hbars([(p["n"], p["t"], f'<b>{e(p["n"])}</b> ({e(p["p"])})<br>{p["t"]:,.0f} pts across {len(p["s"])} seasons on WG rosters')
+                    for p in top], "Most points ever scored on a We Graduated roster", "Rostered weeks only, 2012 on. Search below for anyone else.")
+    return section("player-search", "Player search",
+                   "Every player who has been on a We Graduated roster: how he scored, who had him, and how he got there.",
+                   F.search_body(L, C, lead))
+
+
+def sec_compare(L):
+    return section("player-compare", "Player comparison",
+                   "Pin up to three players side by side: season points, this year week by week, and who has had them.",
+                   F.compare_body())
 
 
 SEARCH_JS = r"""
@@ -572,6 +581,7 @@ SEARCH_JS = r"""
 
 
 def sec_drafts(L):
+    board = F.draft_board_body(L)
     pts = L.season_player_points()
     byr = {}
     for y in L.finished:
@@ -594,6 +604,9 @@ def sec_drafts(L):
         body += collapsible(str(y), f"{len(picks)} picks, {nk} keepers",
                             table(["Rd", "Pick", "Manager", "Player", "Pos", "Season pts"], rows, num=(0, 1, 5)), open_=i == 0)
     body += '<p class="note">Keepers fill each team\'s last six slots (Rounds 10 to 15; Rounds 11 to 16 in 2020). Season points count weeks on any roster in this league.</p>'
+    body = ('<h2 style="margin-top:6px">Draft board</h2><p class="note">Every pick laid out like the draft room: one column per draft slot, one row per round, with the manager who made each pick (traded picks show up under the slot they came from). '
+            'Shaded by how each player did against what that slot usually returns (FPOR, same as the value board), or by position. Hover or tap a square.</p>'
+            + board + "<h2>Season by season</h2>" + body)
     return section("drafts", "Draft results", "Every pick since 2012, keepers marked.", body)
 
 
@@ -710,7 +723,7 @@ def sec_txlog(L):
     return section("txlog", "Transaction log", "Every add, drop and trade on Yahoo, any season.", DY.transaction_log(L, mlink))
 
 
-def sec_team(L, manager, generated):
+def sec_team(L, manager, generated, wk_by_pid):
     cur = next((t for t in L.teams_in(L.current) if t["manager"] == manager), None)
     at = L.alltime()[manager]
     pr = L.playoff_records().get(manager, {"w": 0, "l": 0})
@@ -718,13 +731,7 @@ def sec_team(L, manager, generated):
     body = kpis([("Career record", f'{rec(at["w"], at["l"], at["t"])} ({pct(at["w"], at["l"], at["t"])})'),
                  ("Titles", str(at["titles"])), ("Playoff record", rec(pr["w"], pr["l"])),
                  ("Best finish", str(at["best"] or "-"))])
-    if cur:
-        wk, roster = L.current_roster(cur["team_season_id"])
-        rows = [[e(r["selected_position"]), e(r["player_name"]), e(r["position"]), e(r["nfl_team"]),
-                 f2(r["fantasy_points"]), f1(r["season_pts"])] for r in roster]
-        keepers = [p for p in L.draft(L.current) if p["team_season_id"] == cur["team_season_id"] and p["is_keeper"]]
-        body += f"<h2>{L.current} roster (week {wk})</h2>" + table(["Slot", "Player", "Pos", "NFL", f"Wk {wk}", "Season"], rows, num=(4, 5))
-        body += f"<p class=\"note\">{L.current} keepers: " + ", ".join(e(k["player_name"]) for k in keepers) + "</p>"
+    head, body = body, ""
     seasons = []
     for y in reversed(L.years):
         t = next((t for t in L.teams_in(y) if t["manager"] == manager), None)
@@ -760,13 +767,11 @@ def sec_team(L, manager, generated):
     streaks = [s for s in L.keeper_streaks() if s["manager"] == manager][:8]
     body += "<h2>Longest keeper streaks</h2>" + table(["Player", "Pos", "Years", "Streak"],
         [[e(s["player"]), e(s["pos"]), f'{s["start"]} to {s["end"]}', str(s["years"])] for s in streaks], num=(3,))
-    trades = [t for t in L.trades() if manager in t["sides"]][:12]
-    tc = ""
-    for t in trades:
-        sides = "".join(f'<div class="tside"><strong>{e(m)}</strong> gets: {e(", ".join(v["players"] + v["picks"]) or "nothing listed")}</div>'
-                        for m, v in t["sides"].items())
-        tc += f'<div class="trade-card"><div class="tmeta">{e(t["date"])}</div>{sides}</div>'
-    body += "<h2>Recent trades</h2>" + (tc or '<p class="note">None on Yahoo.</p>')
+    sl = f"team-{D.slug(manager)}"
+    body = head + F.tabs(sl, [("overview", "Overview", body),
+                              ("roster", f"{L.current} roster", F.team_roster_tab(L, manager, cur, table)),
+                              ("drafts", "Drafts", F.team_drafts_tab(L, manager, collapsible)),
+                              ("trades", "Trades", F.team_trades_tab(L, manager, wk_by_pid))])
     title = e(cur["team_name"]) if cur else e(manager)
     sub = f"{e(manager)}" + (f" &middot; {at['seasons']} seasons since {L.years[0]}" if at["seasons"] else "")
     return section(f"team-{D.slug(manager)}", title, sub, body, eyebrow="Team")
@@ -797,7 +802,7 @@ def sidebar(L):
       <h3>League</h3>
       {group("Commentary &amp; League Info", [("desk", "Commissioner's Desk"), ("league-rules", "League rules"), ("rules-history", "Rules history"), ("about", "About this site")])}
       {group("Standings &amp; Records", [("summary", "League home"), ("standings", f"{L.current} scores"), ("alltime", "All-time standings"), ("champions", "Champions &amp; awards"), ("records", "Record book"), ("playoffs", "Playoff history")])}
-      {group("Manager Resources", [("luck", "Luck report"), ("overunder", "Over &amp; under achievers"), ("positional", "Positional strength"), ("value-board", "FPOR value board"), ("player-search", "Player search")])}
+      {group("Manager Resources", [("luck", "Luck report"), ("overunder", "Over &amp; under achievers"), ("positional", "Positional strength"), ("value-board", "FPOR value board"), ("player-search", "Player search"), ("player-compare", "Player comparison")])}
       {group("Draft &amp; Keepers", [("drafts", "Draft results"), ("keepers", "Keeper history"), ("firstround", "First-round history")])}
       {group("Transactions", [("trades", "Trades"), ("faab", "FAAB ledger"), ("txlog", "Transaction log")])}
       {group("Teams", [])[:-len('</div></details>')]}{teams}</div></details>
@@ -809,13 +814,15 @@ def sidebar(L):
 
 def main():
     L = D.League(D.connect())
+    C, corpus_js = F.corpus_script(L)
+    wk_by_pid = F.weekly_by_pid(L)
     generated = datetime.now().strftime("%b %d, %Y %I:%M %p").replace(" 0", " ")
     parts = [sec_home(L, generated), sec_about(L), sec_desk(), sec_rules(), sec_rules_history(),
              sec_standings(L), sec_alltime(L), sec_champions(L), sec_records(L), sec_playoffs(L),
-             sec_luck(L), sec_overunder(L), sec_positional(L), sec_value(L), sec_search(L),
+             sec_luck(L), sec_overunder(L), sec_positional(L), sec_value(L), sec_search(L, C), sec_compare(L),
              sec_drafts(L), sec_keepers(L), sec_firstround(L),
              sec_trades(L), sec_faab(L), sec_txlog(L)]
-    parts += [sec_team(L, m, generated) for m in L.managers]
+    parts += [sec_team(L, m, generated, wk_by_pid) for m in L.managers]
     page = f"""<!doctype html>
 <html lang="en">
 <head>
@@ -825,7 +832,7 @@ def main():
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>{CSS}{EXTRA_CSS}{V.CHART_CSS}{DY.DYN_CSS}</style>
+<style>{CSS}{EXTRA_CSS}{V.CHART_CSS}{DY.DYN_CSS}{F.FEAT_CSS}</style>
 </head>
 <body>
 <div class="layout">
@@ -836,13 +843,15 @@ def main():
 <main class="content">
 <div class="crumb-bar"><button class="crumb-back" data-target="summary" type="button">&larr; League home</button><span class="crumb-sep">&rsaquo;</span><span class="crumb-current"></span></div>
 {"".join(parts)}
+{F.footer(L, generated)}
+{corpus_js}
 {FEEDBACK}
 </main>
 </div>
 <script>{JS}</script>
-<script>{SEARCH_JS}</script>
 <script>{V.CHART_JS}</script>
 <script>{DY.DYN_JS}</script>
+<script>{F.FEAT_JS}</script>
 </body>
 </html>"""
     OUT.write_text(page, encoding="utf-8")

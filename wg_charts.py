@@ -37,22 +37,102 @@ CHART_CSS = """
 .viz-legend { display: flex; gap: 14px; font-size: 12px; color: #606C71; margin: 4px 0 0; flex-wrap: wrap; }
 .viz .dt { fill: #c5c9d2; opacity: .75; cursor: pointer; }
 .viz .dt.hl { fill: #1761A0; opacity: 1; stroke: #fff; stroke-width: 1.5; }
-.viz-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 28px; }
-@media (max-width: 860px) { .viz-grid2 { grid-template-columns: 1fr; } }
+.viz-grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px 28px; }
+.viz-grid2 > *, .viz { min-width: 0; }
+@media (max-width: 860px) { .viz-grid2 { grid-template-columns: minmax(0, 1fr); } }
 .viz-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+/* Phones: a 760-wide chart squeezed to ~340px puts labels at 5px. Keep charts at a
+   readable minimum width and let them scroll sideways instead; a fade on the right
+   edge says there is more. */
+@media (max-width: 720px) {
+  .viz-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -2px; }
+  .viz-scroll > svg { min-width: 620px; }
+  .viz-scroll.viz-narrow > svg { min-width: 440px; }
+  .viz-legend { font-size: 11.5px; gap: 4px 12px; }
+  .viz-sub { font-size: 12px; }
+  .viz-pills { gap: 5px; }
+  .viz-pill { padding: 4px 10px; }
+  .viz-tip { max-width: 240px; }
+}
+.hb { display: flex; flex-direction: column; gap: 3px; margin: 6px 0 4px; font-size: 12.5px; }
+.hb-row { display: grid; grid-template-columns: 76px 1fr; align-items: center; gap: 8px; min-height: 22px; cursor: default; border-radius: 4px; }
+.hb-wide .hb-row { grid-template-columns: 150px 1fr; }
+.hb-row:hover { background: #f5f6f8; }
+.hb-row.hb-div { grid-template-columns: 76px 1fr 1fr; gap: 0 8px; }
+.hb-lab { text-align: right; color: #1d1d1f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hb-track, .hb-half { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.hb-neg { flex-direction: row-reverse; border-right: 1px solid #8e8e93; padding-right: 0; min-height: 22px; }
+.hb-pos { margin-left: -8px; }
+.hb-bar { display: block; height: 14px; border-radius: 0 4px 4px 0; min-width: 1px; }
+.hb-neg .hb-bar { border-radius: 4px 0 0 4px; }
+.hb-stack { display: flex; height: 14px; }
+.hb-seg { display: block; height: 14px; border-right: 1.5px solid #fff; }
+.hb-track { gap: 0; }
+.hb-track .hb-val { margin-left: 6px; }
+.hb-seg:last-of-type { border-right: 0; border-radius: 0 4px 4px 0; }
+.hb-val { font-size: 11.5px; color: #606C71; white-space: nowrap; font-variant-numeric: tabular-nums; }
+@media (max-width: 720px) { .hb-wide .hb-row { grid-template-columns: 118px 1fr; } .hb { font-size: 12px; } }
+.more-right { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 40px), rgba(0,0,0,.15));
+              mask-image: linear-gradient(to right, #000 calc(100% - 40px), rgba(0,0,0,.15)); }
+.more-left { -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 40px), rgba(0,0,0,.15));
+             mask-image: linear-gradient(to left, #000 calc(100% - 40px), rgba(0,0,0,.15)); }
+.more-left.more-right { -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,.15), #000 40px, #000 calc(100% - 40px), rgba(0,0,0,.15));
+                        mask-image: linear-gradient(to right, rgba(0,0,0,.15), #000 40px, #000 calc(100% - 40px), rgba(0,0,0,.15)); }
+.swipe-hint { display: none; font-size: 11px; color: #8e8e93; margin: 2px 0 0; }
+@media (max-width: 720px) { .swipe-hint.on { display: block; } }
 """
 
 CHART_JS = r"""
 (function(){
   const tip = document.createElement('div'); tip.className = 'viz-tip'; document.body.appendChild(tip);
-  document.addEventListener('mousemove', ev => {
+  function showTip(ev) {
     const t = ev.target.closest && ev.target.closest('[data-tip]');
     if (!t) { tip.classList.remove('on'); return; }
     tip.innerHTML = t.getAttribute('data-tip');
     tip.classList.add('on');
-    const x = Math.min(ev.clientX + 14, window.innerWidth - tip.offsetWidth - 8);
-    tip.style.left = x + 'px'; tip.style.top = (ev.clientY + 14) + 'px';
-  });
+    const x = Math.max(8, Math.min(ev.clientX + 14, window.innerWidth - tip.offsetWidth - 8));
+    let y = ev.clientY + 14;
+    if (y + tip.offsetHeight > window.innerHeight - 8) y = Math.max(8, ev.clientY - tip.offsetHeight - 14);
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  }
+  document.addEventListener('mousemove', showTip);
+  document.addEventListener('click', showTip);          // tap to see a tooltip on phones
+  document.addEventListener('scroll', () => tip.classList.remove('on'), true);
+  // Wrap every chart's SVG in a sideways scroller (only active on phones), including
+  // charts drawn later by the season pickers.
+  function wrapCharts(root) {
+    (root || document).querySelectorAll('.viz > svg').forEach(sv => {
+      const w = document.createElement('div');
+      const vb = sv.viewBox && sv.viewBox.baseVal;
+      w.className = 'viz-scroll' + (vb && vb.width && vb.width <= 560 ? ' viz-narrow' : '');
+      sv.parentNode.insertBefore(w, sv); w.appendChild(sv);
+      if (sv.closest('.viz').dataset.end) w.dataset.end = '1';
+    });
+    (root || document).querySelectorAll('.viz-scroll[data-end]').forEach(w => {
+      if (!w.dataset.done && w.offsetParent && w.scrollWidth > w.clientWidth + 4) { w.scrollLeft = w.scrollWidth; w.dataset.done = '1'; }
+    });
+  }
+  // Fade the right edge of anything that scrolls sideways until you reach its end.
+  function cue() {
+    document.querySelectorAll('.viz-scroll, .content table, .table-scroll').forEach(el => {
+      if (!el.offsetParent) return;
+      const more = el.scrollWidth > el.clientWidth + 4 && el.scrollLeft + el.clientWidth < el.scrollWidth - 4;
+      el.classList.toggle('more-right', more);
+      el.classList.toggle('more-left', el.scrollLeft > 4);
+      if (el.classList.contains('viz-scroll')) {
+        let h = el.nextElementSibling;
+        if (!h || !h.classList.contains('swipe-hint')) { h = document.createElement('div'); h.className = 'swipe-hint'; h.textContent = 'Swipe sideways to see the whole chart'; el.after(h); }
+        h.classList.toggle('on', el.scrollWidth > el.clientWidth + 4);
+      }
+    });
+  }
+  window.wgCharts = { wrap: wrapCharts, cue: cue };
+  wrapCharts();
+  document.addEventListener('scroll', ev => { if (ev.target.classList) { const el = ev.target;
+    if (el.matches('.viz-scroll, .content table, .table-scroll')) { el.classList.toggle('more-right', el.scrollLeft + el.clientWidth < el.scrollWidth - 4); el.classList.toggle('more-left', el.scrollLeft > 4); } } }, true);
+  ['click', 'change'].forEach(evn => document.addEventListener(evn, () => setTimeout(() => { wrapCharts(); cue(); }, 60)));
+  window.addEventListener('resize', cue);
+  setTimeout(() => { wrapCharts(); cue(); }, 100);
   // multi-line highlight: pills + hovering a line
   document.querySelectorAll('.viz[data-hl]').forEach(v => {
     const set = m => {
@@ -166,25 +246,19 @@ def scatter_luck(points, title, sub):
     return _wrap(svg + leg, title, sub)
 
 
-def diverging_bars(rows, title, sub, fmt="{:+.1f}"):
-    """rows: [(label, value)] sorted as given. Horizontal bars from zero."""
-    rh, L, R, W = 26, 70, 56, 640
-    H = rh * len(rows) + 8
-    vmax = max(abs(v) for _, v in rows) or 1
-    zero = L + (W - L - R) / 2
-    half = (W - L - R) / 2 - 44   # leave room for value labels on both sides
-    out = f'<line x1="{zero}" x2="{zero}" y1="0" y2="{H}" stroke="{INK3}" stroke-width="1"/>'
+def diverging_bars(rows, title, sub, fmt="{:+.1f}", tips=None):
+    """rows: [(label, value)] sorted as given. HTML bars either side of zero,
+    so labels stay at real font size on any screen width."""
+    vmax = max((abs(v) for _, v in rows), default=1) or 1
+    out = ""
     for i, (lab, v) in enumerate(rows):
-        y = 4 + i * rh
-        w = half * abs(v) / vmax
-        x = zero if v >= 0 else zero - w
-        col = ACCENT if v >= 0 else NEG
-        tipd = f"<b>{e(lab)}</b><br>{fmt.format(v)}"
-        bar = _hbar(x, y + 5, max(w, 1), 14, col, right=v >= 0)
-        out += (f'<g data-tip="{e(tipd)}">{bar}<rect x="{L}" y="{y}" width="{W - L - R}" height="{rh}" fill="transparent"/></g>'
-                f'<text x="{L - 8}" y="{y + 16}" text-anchor="end" font-size="12" fill="{INK}">{e(lab)}</text>'
-                f'<text x="{x + w + 6 if v >= 0 else x - 6:.1f}" y="{y + 16}" text-anchor="{"start" if v >= 0 else "end"}" font-size="11" fill="{INK2}">{fmt.format(v)}</text>')
-    return _wrap(f'<svg viewBox="0 0 {W} {H}" role="img" aria-label="{e(title)}">{out}</svg>', title, sub)
+        f = abs(v) / vmax
+        tipd = tips[i] if tips else f"<b>{e(lab)}</b><br>{fmt.format(v)}"
+        bar = f'<span class="hb-bar" style="width:calc((100% - 46px) * {f:.4f});background:{ACCENT if v >= 0 else NEG}"></span><span class="hb-val">{fmt.format(v)}</span>'
+        neg, pos = ("", bar) if v >= 0 else (bar, "")
+        out += (f'<div class="hb-row hb-div" data-tip="{e(tipd)}"><span class="hb-lab">{e(lab)}</span>'
+                f'<span class="hb-half hb-neg">{neg}</span><span class="hb-half hb-pos">{pos}</span></div>')
+    return _wrap(f'<div class="hb" role="img" aria-label="{e(title)}">{out}</div>', title, sub)
 
 
 def _hbar(x, y, w, h, col, right=True):
@@ -342,49 +416,31 @@ def vbars(cats, vals, title, sub, fmt="{:,.0f}", tips=None, colors=None, ref=Non
     return _wrap(f'<svg viewBox="0 0 {W} {H}" role="img" aria-label="{e(title)}">{out}</svg>', title, sub)
 
 
-def hbars(rows, title, sub, fmt="{:,.0f}", color=ACCENT, lw=110, W=640):
-    """rows: [(label, value, tip or None)] in display order, values >= 0."""
-    rh, R = 24, 60
-    H = rh * len(rows) + 6
+def hbars(rows, title, sub, fmt="{:,.0f}", color=ACCENT, lw=None, W=None):
+    """rows: [(label, value, tip or None)] in display order, values >= 0. HTML bars."""
     vmax = max((v for _, v, _ in rows), default=1) or 1
     out = ""
-    for i, (lab, v, tip) in enumerate(rows):
-        y = 3 + i * rh
-        w = (W - lw - R) * v / vmax
+    for lab, v, tip in rows:
         tipd = tip or f"<b>{e(lab)}</b><br>{fmt.format(v)}"
-        out += (f'<text x="{lw - 8}" y="{y + 15}" text-anchor="end" font-size="12" fill="{INK}">{e(lab)}</text>'
-                f'<g data-tip="{e(tipd)}">{_hbar(lw, y + 4, max(w, 1), 14, color) if v else ""}'
-                f'<rect x="{lw}" y="{y}" width="{W - lw - R}" height="{rh}" fill="transparent"/></g>'
-                f'<text x="{lw + w + 6:.1f}" y="{y + 15}" font-size="11" fill="{INK2}" pointer-events="none">{fmt.format(v)}</text>')
-    return _wrap(f'<svg viewBox="0 0 {W} {H}" role="img" aria-label="{e(title)}">{out}</svg>', title, sub)
+        out += (f'<div class="hb-row" data-tip="{e(tipd)}"><span class="hb-lab">{e(lab)}</span><span class="hb-track">'
+                f'<span class="hb-bar" style="width:calc((100% - 52px) * {v / vmax:.4f});background:{color}"></span>'
+                f'<span class="hb-val">{fmt.format(v)}</span></span></div>')
+    wide = " hb-wide" if max((len(str(r[0])) for r in rows), default=0) > 9 else ""
+    return _wrap(f'<div class="hb{wide}" role="img" aria-label="{e(title)}">{out}</div>', title, sub)
 
 
-def stacked_hbars(rows, segs, title, sub, lw=110, W=680, show_total=True):
-    """rows: [(label, [v per seg], tip)]; segs: [(name, color)]."""
-    rh, R = 24, 44
-    H = rh * len(rows) + 6
+def stacked_hbars(rows, segs, title, sub, lw=None, W=None, show_total=True):
+    """rows: [(label, [v per seg], tip)]; segs: [(name, color)]. HTML stacked bars."""
     vmax = max((sum(v) for _, v, _ in rows), default=1) or 1
     out = ""
-    for i, (lab, vs, tip) in enumerate(rows):
-        y = 3 + i * rh
-        x = lw
-        bars = ""
-        last = max((j for j, v in enumerate(vs) if v), default=-1)
-        for j, v in enumerate(vs):
-            if not v:
-                continue
-            w = (W - lw - R) * v / vmax
-            bars += (_hbar(x, y + 4, w, 14, segs[j][1]) if j == last else
-                     f'<rect x="{x:.1f}" y="{y + 4}" width="{w:.1f}" height="14" fill="{segs[j][1]}"/>')
-            if j != last:
-                bars += f'<line x1="{x + w:.1f}" x2="{x + w:.1f}" y1="{y + 4}" y2="{y + 18}" stroke="#fff" stroke-width="1.5"/>'
-            x += w
-        out += (f'<text x="{lw - 8}" y="{y + 15}" text-anchor="end" font-size="12" fill="{INK}">{e(lab)}</text>'
-                f'<g data-tip="{e(tip)}">{bars}<rect x="{lw}" y="{y}" width="{W - lw - R}" height="{rh}" fill="transparent"/></g>')
-        if show_total:
-            out += f'<text x="{x + 6:.1f}" y="{y + 15}" font-size="11" fill="{INK2}" pointer-events="none">{sum(vs):g}</text>'
+    for lab, vs, tip in rows:
+        parts = "".join(f'<span class="hb-seg" style="width:calc((100% - 44px) * {v / vmax:.4f});background:{segs[j][1]}"></span>'
+                        for j, v in enumerate(vs) if v)
+        tot = f'<span class="hb-val">{sum(vs):g}</span>' if show_total else ""
+        out += (f'<div class="hb-row" data-tip="{e(tip)}"><span class="hb-lab">{e(lab)}</span><span class="hb-track">'
+                f'{parts}{tot}</span></div>')
     leg = '<div class="viz-legend">' + "".join(f'<span><i style="background:{c}"></i>{e(n)}</span>' for n, c in segs) + "</div>"
-    return _wrap(f'<svg viewBox="0 0 {W} {H}" role="img" aria-label="{e(title)}">{out}</svg>' + leg, title, sub)
+    return _wrap(f'<div class="hb" role="img" aria-label="{e(title)}">{out}</div>' + leg, title, sub)
 
 
 def stacked_vbars(cats, segs, title, sub, height=230, label_every=1, W=760):
@@ -522,3 +578,25 @@ def scatter_xy(points, title, sub, xlabel, ylabel, xfmt="{:g}", yfmt="{:g}", lin
             placed.append((cx, ly))
             labs += f'<text x="{cx:.1f}" y="{ly:.1f}" text-anchor="middle" font-size="11" fill="{INK}" pointer-events="none">{e(lab)}</text>'
     return _wrap(f'<svg viewBox="0 0 {W} {H}" role="img" aria-label="{e(title)}">{out}{dots}{labs}</svg>', title, sub)
+
+
+# ---- phones: time-series charts open scrolled to the latest season/week ----
+def _end(html):
+    return html.replace('<div class="viz"', '<div class="viz" data-end="1"', 1)
+
+
+def _yearish(cats):
+    return len(cats) >= 8 and all(str(c).isdigit() and len(str(c)) in (2, 4) for c in cats)
+
+
+for _name in ("multi_line", "strip", "band_line", "finish_line"):
+    _f = globals()[_name]
+    globals()[_name] = (lambda f: (lambda *a, **k: _end(f(*a, **k))))(_f)
+
+_vbars0, _svbars0 = vbars, stacked_vbars
+def vbars(cats, *a, **k):
+    h = _vbars0(cats, *a, **k)
+    return _end(h) if _yearish(cats) else h
+def stacked_vbars(cats, *a, **k):
+    h = _svbars0(cats, *a, **k)
+    return _end(h) if _yearish(cats) else h

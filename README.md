@@ -47,9 +47,28 @@ season share a manager.
 team-week, so Ctrl+C is safe and a rerun picks up where it stopped. Try one
 season first: `--seasons 2025 --commit`.
 
+## Weekly refresh (in season)
+
+One step: double-click `refresh.bat`, or run `refresh` in cmd from this folder.
+It pulls the current season (league, transactions, results, weekly stats),
+writes `scores.json`, rebuilds `index.html` and pushes to GitHub. It stops at
+the first failure and logs to `refresh.log`. Options: `refresh --no-publish`,
+`refresh --site-only`.
+
+Live scores: `live_scores.py` writes and pushes only `scores.json`; League
+home re-fetches it on load. To run it hourly during games and the full
+refresh every morning, run once in PowerShell:
+`powershell -ExecutionPolicy Bypass -File register_schedule.ps1`.
+
+Losing FAAB bids are not in the Yahoo API. They come from Yahoo's FAB Offers
+page (`faab_offers.json`, every season through Nov 2026). Ask Claude to
+refresh them after Wednesday waivers.
+
 ## Files
 
 - `wg_common.py` shared plumbing (dry-run/commit, backup, Yahoo retry, parsing)
+- `generate_site.py` builds `index.html`; page pieces in `wg_data.py`, `wg_charts.py`, `wg_dynamic.py`, `wg_features.py`, `wg_players.py`, `wg_value.py` (FPOR), `wg_content.py` (rules, history), `wg_template.py` (I Yearn styles)
+- `refresh.py` / `refresh.bat` one-step refresh; `live_scores.py` live matchups; `register_schedule.ps1` scheduled jobs
 - `schema.sql` tables; `v_team_seasons` view joins teams to managers
 - `league_chain.json` season -> Yahoo game/league IDs
 - `League Docs/` commissioner's sheets (offline copies, July 2026)

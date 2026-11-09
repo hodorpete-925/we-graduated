@@ -345,7 +345,7 @@ class League:
     def current_roster(self, tsid):
         wk = self.c.execute("SELECT MAX(week) FROM player_weekly_stats WHERE team_season_id=?", (tsid,)).fetchone()[0]
         rows = self.c.execute(
-            """SELECT p.player_name, p.position, p.nfl_team, s.selected_position, s.fantasy_points,
+            """SELECT s.player_id, p.player_name, p.position, p.nfl_team, s.selected_position, s.fantasy_points,
                       (SELECT SUM(fantasy_points) FROM player_weekly_stats x WHERE x.player_id=s.player_id
                          AND x.season=s.season AND x.team_season_id=s.team_season_id) season_pts
                FROM player_weekly_stats s JOIN players p USING(player_id)

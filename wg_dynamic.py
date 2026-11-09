@@ -51,7 +51,8 @@ def _cls(v, cut):
 def value_board(L, mlink):
     data, panes, hist = {}, "", []
     for y in L.years:
-        rows, meta = W.value_board(L.c, L, y)
+        import wg_features as F
+        rows, meta = F.value_rows(L, y)
         if not rows:
             continue
         kind_ix = {"pick": 0, "keeper": 1, "pickup": 2}
@@ -350,6 +351,7 @@ DYN_CSS = """
 DYN_JS = r"""
 (function(){
   const esc = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+  const fd = d => { const p = String(d).split('-'); return p.length < 3 ? d : ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+p[1] - 1] + ' ' + (+p[2]); };
   const sg = (v, d) => (v >= 0 ? '+' : '') + Number(v).toFixed(d === undefined ? 1 : d);
   function mix(a, b, t) { const p = c => [1,3,5].map(i => parseInt(c.slice(i, i+2), 16)); const x = p(a), y = p(b);
     return '#' + x.map((v, i) => Math.round(v + (y[i] - v) * t).toString(16).padStart(2, '0')).join(''); }
@@ -425,6 +427,7 @@ DYN_JS = r"""
         sub: `Every pick and keeper, through week ${D.wk}. Dashed line = what an average pick at that slot produced. Use the filters to spotlight a manager or position.`,
         xl: 'Overall pick', yl: 'FPOR', line: [D.a, D.b, 1, maxPick], band: isFinite(minKeep) ? [minKeep - .5, Math.max(...D.r.map(r => r[5] || 0)) + .5] : null,
         legend: [['Drafted (Rd 1 to 9)', '#1761A0'], ['Keeper', '#86b6ef']]});
+      if (window.wgCharts) { wgCharts.wrap(document.getElementById('vb-scatter')); setTimeout(wgCharts.cue, 30); }
       const groups = [];
       for (let rd = 1; rd < D.k1; rd++) groups.push([`Round ${rd}`, '', D.r.filter(r => r[3] === 0 && r[4] === rd)]);
       groups.push(['Keepers', `Rounds ${D.k1}+`, D.r.filter(r => r[3] === 1)]);
@@ -458,7 +461,7 @@ DYN_JS = r"""
         const los = c[5].length ? c[5].slice().sort((a, b) => b[1] - a[1]).map(l => `<div class="fl-loser">${esc(l[0])} $${l[1]} <span class="tl-via">${R[l[2]]}</span></div>`).join('') : '<span class="tl-via">uncontested</span>';
         const prod = c[7] ? `${sg(c[9])} FPOR in ${c[7]} g` : '<span class="tl-via">no games</span>';
         const ppd = c[7] ? (c[4] ? (c[8] / c[4]).toFixed(1) : 'free') : '';
-        return `<tr><td class="tl-date">${c[0]}</td><td class="tl-mgr">${esc(c[1])}</td><td><b>${esc(c[2])}</b> <span class="tl-via">${c[3]}</span></td>` +
+        return `<tr><td class="tl-date">${fd(c[0])}</td><td class="tl-mgr">${esc(c[1])}</td><td><b>${esc(c[2])}</b> <span class="tl-via">${c[3]}</span></td>` +
           `<td class="num"><b>$${c[4]}</b></td><td>${los}</td><td class="num">${c[6] == null ? '' : '$' + c[6]}</td><td>${prod}</td><td class="num">${ppd}</td></tr>`; }).join('') ||
         '<tr><td colspan="8" class="note">No claims match.</td></tr>';
     }
@@ -480,12 +483,12 @@ DYN_JS = r"""
       const mgr = sel.value, on = new Set(chips.filter(c => c.classList.contains('is-on')).map(c => c.dataset.type));
       const rows = D.filter(r => on.has(r[1]) && (!mgr || (r[1] === 't' ? r[2].some(s => s[0] === mgr) : r[2] === mgr)));
       body.innerHTML = rows.slice(0, limit).map(r => {
-        if (r[1] === 't') return `<tr><td class="tl-date">${r[0]}</td><td><span class="tl-badge tl-trade">Trade</span></td><td class="tl-mgr">${r[2].map(s => esc(s[0])).join(' &harr; ')}</td>` +
+        if (r[1] === 't') return `<tr><td class="tl-date">${fd(r[0])}</td><td><span class="tl-badge tl-trade">Trade</span></td><td class="tl-mgr">${r[2].map(s => esc(s[0])).join(' &harr; ')}</td>` +
           `<td>${r[2].map(s => `<div class="tl-side"><b>${esc(s[0])}</b> gets ${[names(s[1]), ...s[2].map(k => 'Rd ' + k + ' pick')].filter(Boolean).join(', ') || 'nothing'}</div>`).join('')}</td><td></td></tr>`;
         const det = [];
         if (r[3].length) det.push(`<span class="tl-in">+ ${names(r[3])}</span><span class="tl-via">${r[6] === 'w' ? ' via waivers' : r[6] === 'f' ? ' free agent' : ''}</span>`);
         if (r[4].length) det.push(`<span class="tl-out">&minus; ${names(r[4])}</span>`);
-        return `<tr><td class="tl-date">${r[0]}</td><td><span class="tl-badge ${B[r[1]][0]}">${B[r[1]][1]}</span></td><td class="tl-mgr">${esc(r[2])}</td><td>${det.join('<br>')}</td><td class="num">${r[5] ? '$' + r[5] : ''}</td></tr>`;
+        return `<tr><td class="tl-date">${fd(r[0])}</td><td><span class="tl-badge ${B[r[1]][0]}">${B[r[1]][1]}</span></td><td class="tl-mgr">${esc(r[2])}</td><td>${det.join('<br>')}</td><td class="num">${r[5] ? '$' + r[5] : ''}</td></tr>`;
       }).join('') || '<tr><td colspan="5" class="note">No moves match.</td></tr>';
       const c = document.getElementById('tl-count');
       c.innerHTML = rows.length > limit ? `Showing ${limit} of ${rows.length} moves. <button type="button" class="tl-more">Show all</button>` : `${rows.length} moves.`;
