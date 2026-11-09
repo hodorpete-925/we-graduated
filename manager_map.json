@@ -1,0 +1,30 @@
+{
+  "_notes": "Pete, 2026-11-09: site uses league first names (Mike, Chris, Pete, Ryan, John...). 2010-2011 skipped for now.",
+  "by_nickname": {
+    "Malco": "Brian",
+    "BRick": "Brad",
+    "J_Ross": "John",
+    "Michael": "Mike",
+    "Christopher": "Chris",
+    "Peter": "Pete",
+    "RyanC": "Ryan"
+  },
+  "by_team": {
+    "2012:10": "Joel",
+    "2013:8": "Joel",
+    "2014:10": "Joel",
+    "2015:8": "Joel",
+    "2016:11": "Joel",
+    "2017:2": "Joel",
+    "2018:2": "Joel",
+    "2019:9": "Joel",
+    "2020:12": "Joel",
+    "2021:6": "Joel",
+    "2022:6": "Joel",
+    "2023:6": "Joel",
+    "2024:4": "Joel",
+    "2025:3": "Joel",
+    "2026:3": "Joel"
+  },
+  "by_guid": {}
+}

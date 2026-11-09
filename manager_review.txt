@@ -1,0 +1,37 @@
+Manager review (12 team-seasons; 12 with hidden guid)
+
+Andy  (1 seasons)
+    2026  team 11  The James Connor Experience      nick='Andy'               guid=hidden     via auto:nickname
+
+Aric  (1 seasons)
+    2026  team 10  Sharty Waffles                   nick='Aric'               guid=hidden     via auto:nickname
+
+Brian  (1 seasons)
+    2026  team  5  I Wish Joel Didn't Confirm       nick='Brian'              guid=hidden     via auto:nickname
+
+Chris  (1 seasons)
+    2026  team  7  No means no                      nick='Christopher'        guid=hidden     via map:nickname
+
+Howard  (1 seasons)
+    2026  team  4  Foster!AussieForTD               nick='Howard'             guid=hidden     via auto:nickname
+
+Jeff  (1 seasons)
+    2026  team  6  Meet the Swifts                  nick='Jeff'               guid=hidden     via auto:nickname
+
+Joel  (1 seasons)
+    2026  team  3  American Red Cross               nick='-- hidden --'       guid=hidden     via map:team
+
+John  (1 seasons)
+    2026  team  2  10 Years Later                   nick='J_Ross'             guid=hidden     via map:nickname
+
+Mike  (1 seasons)
+    2026  team  1  Buffalo Bills+                   nick='Michael'            guid=hidden     via map:nickname
+
+Pete  (1 seasons)  [this is you]
+    2026  team  9  Ryan-0 Hydrangea-1               nick='Peter'              guid=hidden     via map:nickname
+
+Ryan  (1 seasons)
+    2026  team 12  The Process                      nick='RyanC'              guid=hidden     via map:nickname
+
+Will  (1 seasons)
+    2026  team  8  Quinn647                         nick='Will'               guid=hidden     via auto:nickname

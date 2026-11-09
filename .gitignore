@@ -1,0 +1,59 @@
+# Virtual environment
+venv/
+
+# Secrets and credentials
+.env
+private.json
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# OS
+Thumbs.db
+.DS_Store
+
+# SQLite database files (regenerable from Yahoo API)
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Excel workbooks: reference only, never committed (incl. League Docs/ commissioner snapshots)
+*.xlsx
+~$*.xlsx
+
+# Analysis intermediates - regenerable, not source
+diff_*.csv
+trades_db_export.csv
+teams_export.csv
+db_only_review.txt
+
+# Setup scratch
+setup_summary.md
+system_report.txt
+test_write.txt
+_write_test.txt
+
+# ADP review output (regenerable)
+adp_unmatched.csv
+
+# Reference copies of I Yearn source files kept for porting — do not ship
+*.reference
+
+# Control-panel run log — local only, regenerated on every run
+runs.json
+
+# DB backups made by --commit runs (copies of fantasy.db)
+Backups/
+
+# July 2026 scaffold, superseded by the 2026-11-08 fork
+_old_scaffold_2026-07/
+
+# Commissioner reference material: background context only, never published or committed
+League Docs/*.zip
+Commissioner Library/
+_tools/
+
+# Paid draft rankings and private draft prep: never published
+2026 Draft/
