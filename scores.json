@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 9 5:12 PM EST",
+ "as_of": "Nov 9 9:00 PM EST",
  "season": 2026,
  "week": 9,
  "status": "in_progress",
@@ -9,8 +9,8 @@
    "a": {
     "tid": 1,
     "team": "Buffalo Bills+",
-    "proj": 105.98,
-    "pts": 74.68,
+    "proj": 106.22,
+    "pts": 80.28,
     "rec": "5-3-0",
     "rank": 4,
     "win_prob": 0.92
@@ -30,20 +30,20 @@
    "a": {
     "tid": 2,
     "team": "10 Years Later",
-    "proj": 94.04,
+    "proj": 94.09,
     "pts": 82.46,
     "rec": "4-4-0",
     "rank": 6,
-    "win_prob": 0.04
+    "win_prob": 0.05
    },
    "b": {
     "tid": 3,
     "team": "American Red Cross",
-    "proj": 109.39,
-    "pts": 89.1,
+    "proj": 109.66,
+    "pts": 89.52,
     "rec": "7-1-0",
     "rank": 1,
-    "win_prob": 0.96
+    "win_prob": 0.95
    },
    "status": "in_progress"
   },
@@ -72,7 +72,7 @@
    "a": {
     "tid": 5,
     "team": "I Wish Joel Didn't Confirm",
-    "proj": 116.43,
+    "proj": 116.45,
     "pts": 141.5,
     "rec": "3-5-0",
     "rank": 8,
@@ -81,8 +81,8 @@
    "b": {
     "tid": 6,
     "team": "Meet the Swifts",
-    "proj": 93.72,
-    "pts": 86.48,
+    "proj": 93.67,
+    "pts": 99.98,
     "rec": "6-2-0",
     "rank": 3,
     "win_prob": 0.01
@@ -93,8 +93,8 @@
    "a": {
     "tid": 7,
     "team": "No means no",
-    "proj": 102.48,
-    "pts": 77.88,
+    "proj": 102.56,
+    "pts": 79.38,
     "rec": "2-6-0",
     "rank": 11,
     "win_prob": 0.01
@@ -102,8 +102,8 @@
    "b": {
     "tid": 12,
     "team": "The Process",
-    "proj": 114.61,
-    "pts": 112.46,
+    "proj": 114.67,
+    "pts": 113.66,
     "rec": "3-5-0",
     "rank": 9,
     "win_prob": 0.99
