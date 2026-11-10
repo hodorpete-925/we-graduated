@@ -172,7 +172,7 @@ def sec_home(L, generated):
     body += V.diverging_bars(sorted([(m, v["w"] - v["xw"]) for m, v in luckd.items()], key=lambda r: -r[1]),
                              "Luck so far", "Actual minus all-play expected wins. More on the Luck report.") + "</div>"
     body += F.live_block(L)
-    body += f"<h2>{y} standings</h2>" + table(["#", "Team", "Record", "PF", "PA"], st, cls="roster standings", num=(2, 3, 4))
+    body += f"<h2>{y} standings</h2>" + table(["#", "Team", "Record", "PF", "PA"], st, cls="roster wg-standings", num=(2, 3, 4))
     body += (f'<h2>From the Commissioner</h2><p>Latest: <a href="{C.SUBSTACK}/p/{latest[0]}" target="_blank" rel="noopener">'
              f'{e(latest[1])}</a>. More on the <a href="#" data-target="desk">Commissioner\'s Desk</a>.</p>')
     if lo:
@@ -541,6 +541,10 @@ def sec_search(L, C):
                    F.search_body(L, C, lead))
 
 
+def sec_h2h(L, games):
+    return section("h2h", "Head-to-head", "Every manager's record against every other manager.", F.h2h_body(L, games))
+
+
 def sec_compare(L):
     return section("player-compare", "Player comparison",
                    "Pin up to three players side by side: season points, this year week by week, and who has had them.",
@@ -723,7 +727,7 @@ def sec_txlog(L):
     return section("txlog", "Transaction log", "Every add, drop and trade on Yahoo, any season.", DY.transaction_log(L, mlink))
 
 
-def sec_team(L, manager, generated, wk_by_pid):
+def sec_team(L, manager, generated, wk_by_pid, h2h):
     cur = next((t for t in L.teams_in(L.current) if t["manager"] == manager), None)
     at = L.alltime()[manager]
     pr = L.playoff_records().get(manager, {"w": 0, "l": 0})
@@ -767,6 +771,7 @@ def sec_team(L, manager, generated, wk_by_pid):
     streaks = [s for s in L.keeper_streaks() if s["manager"] == manager][:8]
     body += "<h2>Longest keeper streaks</h2>" + table(["Player", "Pos", "Years", "Streak"],
         [[e(s["player"]), e(s["pos"]), f'{s["start"]} to {s["end"]}', str(s["years"])] for s in streaks], num=(3,))
+    body += F.team_h2h_table(L, h2h, manager, mlink, table)
     sl = f"team-{D.slug(manager)}"
     body = head + F.tabs(sl, [("overview", "Overview", body),
                               ("roster", f"{L.current} roster", F.team_roster_tab(L, manager, cur, table)),
@@ -801,7 +806,7 @@ def sidebar(L):
       </button>
       <h3>League</h3>
       {group("Commentary &amp; League Info", [("desk", "Commissioner's Desk"), ("league-rules", "League rules"), ("rules-history", "Rules history"), ("about", "About this site")])}
-      {group("Standings &amp; Records", [("summary", "League home"), ("standings", f"{L.current} scores"), ("alltime", "All-time standings"), ("champions", "Champions &amp; awards"), ("records", "Record book"), ("playoffs", "Playoff history")])}
+      {group("Standings &amp; Records", [("summary", "League home"), ("standings", f"{L.current} scores"), ("alltime", "All-time standings"), ("champions", "Champions &amp; awards"), ("records", "Record book"), ("playoffs", "Playoff history"), ("h2h", "Head-to-head")])}
       {group("Manager Resources", [("luck", "Luck report"), ("overunder", "Over &amp; under achievers"), ("positional", "Positional strength"), ("value-board", "FPOR value board"), ("player-search", "Player search"), ("player-compare", "Player comparison")])}
       {group("Draft &amp; Keepers", [("drafts", "Draft results"), ("keepers", "Keeper history"), ("firstround", "First-round history")])}
       {group("Transactions", [("trades", "Trades"), ("faab", "FAAB ledger"), ("txlog", "Transaction log")])}
@@ -816,13 +821,14 @@ def main():
     L = D.League(D.connect())
     C, corpus_js = F.corpus_script(L)
     wk_by_pid = F.weekly_by_pid(L)
+    h2h = F.h2h_games(L)
     generated = datetime.now().strftime("%b %d, %Y %I:%M %p").replace(" 0", " ")
     parts = [sec_home(L, generated), sec_about(L), sec_desk(), sec_rules(), sec_rules_history(),
-             sec_standings(L), sec_alltime(L), sec_champions(L), sec_records(L), sec_playoffs(L),
+             sec_standings(L), sec_alltime(L), sec_champions(L), sec_records(L), sec_playoffs(L), sec_h2h(L, h2h),
              sec_luck(L), sec_overunder(L), sec_positional(L), sec_value(L), sec_search(L, C), sec_compare(L),
              sec_drafts(L), sec_keepers(L), sec_firstround(L),
              sec_trades(L), sec_faab(L), sec_txlog(L)]
-    parts += [sec_team(L, m, generated, wk_by_pid) for m in L.managers]
+    parts += [sec_team(L, m, generated, wk_by_pid, h2h) for m in L.managers]
     page = f"""<!doctype html>
 <html lang="en">
 <head>
@@ -832,7 +838,7 @@ def main():
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>{CSS}{EXTRA_CSS}{V.CHART_CSS}{DY.DYN_CSS}{F.FEAT_CSS}</style>
+<style>{CSS}{EXTRA_CSS}{V.CHART_CSS}{DY.DYN_CSS}{F.FEAT_CSS}{F.H2H_CSS}</style>
 </head>
 <body>
 <div class="layout">
@@ -852,6 +858,7 @@ def main():
 <script>{V.CHART_JS}</script>
 <script>{DY.DYN_JS}</script>
 <script>{F.FEAT_JS}</script>
+<script>{F.H2H_JS}</script>
 </body>
 </html>"""
     OUT.write_text(page, encoding="utf-8")

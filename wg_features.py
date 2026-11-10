@@ -92,7 +92,7 @@ def team_roster_tab(L, manager, cur, table):
                  f'<td class="expand-col"><button class="expand-btn pexp-btn" type="button" aria-label="Show past seasons">&rsaquo;</button></td></tr>'
                  f'<tr class="pexp-detail" hidden><td colspan="5"></td></tr>')
     return (f'<p class="note">Week {wk} lineup. Tap a player for his past seasons and how he got here.</p>'
-            f'<div class="table-scroll"><table class="roster team-roster"><thead><tr><th>Slot</th><th>Player</th>'
+            f'<div class="table-scroll"><table class="roster wg-roster"><thead><tr><th>Slot</th><th>Player</th>'
             f'<th class="num">Wk {wk}</th><th class="num">Season</th><th></th></tr></thead><tbody>{rows}</tbody></table></div>')
 
 
@@ -586,5 +586,179 @@ FEAT_JS = r"""
       if (d && d.matchups && d.matchups.length && d.week >= window.WG_LIVE.week) draw(d);
     }).catch(() => {});
   }
+})();
+"""
+
+
+# ---------------------------------------------------------------- head-to-head (added for Mike, 2026-11-09)
+
+def h2h_games(L):
+    """Every decided game between two managers: (season, week, kind, mgr_a, mgr_b, pts_a, pts_b).
+    kind 'r' = regular season, 'p' = championship bracket. Consolation games are left out."""
+    out, seen = [], set()
+    for m in L.final_games(regular=True):
+        a, b = m["team_season_id"], m["opponent_team_season_id"]
+        if not b or (m["season"], m["week"], b, a) in seen:
+            continue
+        seen.add((m["season"], m["week"], a, b))
+        out.append((m["season"], m["week"], "r", L.mgr(a), L.mgr(b), m["points"] or 0, m["opponent_points"] or 0))
+    for g in L.bracket_games():
+        out.append((g["season"], g["week"], "p", L.mgr(g["winner"]), L.mgr(g["loser"]), g["wpts"] or 0, g["lpts"] or 0))
+    return sorted(out)
+
+
+def h2h_summary(games, me, kinds=("r",)):
+    """Per-opponent record for one manager."""
+    by = defaultdict(list)
+    for s, w, k, a, b, pa, pb in games:
+        if k not in kinds:
+            continue
+        if a == me:
+            by[b].append((s, w, pa, pb))
+        elif b == me:
+            by[a].append((s, w, pb, pa))
+    rows = []
+    for opp, gs in by.items():
+        wins = sum(1 for g in gs if g[2] > g[3]); losses = sum(1 for g in gs if g[2] < g[3]); ties = len(gs) - wins - losses
+        streak, last = 0, None
+        for g in reversed(gs):
+            r = "W" if g[2] > g[3] else "L" if g[2] < g[3] else "T"
+            if last is None:
+                last = r
+            if r != last:
+                break
+            streak += 1
+        rows.append({"opp": opp, "g": len(gs), "w": wins, "l": losses, "t": ties,
+                     "pf": sum(g[2] for g in gs) / len(gs), "pa": sum(g[3] for g in gs) / len(gs),
+                     "streak": f"{last}{streak}" if last else "", "last": gs[-1]})
+    return sorted(rows, key=lambda r: (-(r["w"] + r["t"] / 2) / r["g"], -r["g"]))
+
+
+def h2h_body(L, games):
+    mgrs = sorted({g[3] for g in games} | {g[4] for g in games})
+    ix = {m: i for i, m in enumerate(mgrs)}
+    data = [[s, w, 1 if k == "p" else 0, ix[a], ix[b], round(pa, 2), round(pb, 2)] for s, w, k, a, b, pa, pb in games]
+    opts = "".join(f'<option value="{i}"{" selected" if m == "Pete" else ""}>{e(m)}</option>' for i, m in enumerate(mgrs))
+    yrs = sorted({g[0] for g in games})
+    return (f'<div class="vb-filters"><div class="vb-filter vb-chips" id="h2h-kind">'
+            '<button type="button" class="vb-chip is-on" data-k="r">Regular season</button>'
+            '<button type="button" class="vb-chip" data-k="p">Playoffs</button>'
+            '<button type="button" class="vb-chip" data-k="a">Both</button></div>'
+            f'<label class="vb-filter">Manager <select id="h2h-mgr">{opts}</select></label></div>'
+            '<div class="viz"><div class="viz-title">Every manager against every manager</div>'
+            '<div class="viz-sub">Read across a row: that manager\'s record against each opponent. Blue = winning record, red = losing. '
+            'Tap a cell for the details, or a name to make it the selected manager.</div>'
+            '<div class="h2h-scroll"><div id="h2h-grid" class="h2h-grid"></div></div>'
+            '<div class="viz-legend"><span><i style="background:#1761A0"></i>Owns the matchup</span><span><i style="background:#f0efec;border:1px solid #ddd"></i>Even</span>'
+            '<span><i style="background:#e34948"></i>Owned by them</span><span class="tl-via">Fewer than 3 games is shown faint.</span></div></div>'
+            '<h2 id="h2h-h"></h2><div id="h2h-detail"></div>'
+            f'<p class="note">Every decided game on Yahoo, {yrs[0]} to {yrs[-1]} (Yahoo history before 2012 is not loaded). '
+            'Playoffs means the championship bracket only; consolation games are left out. Brad (2012 to 2018) and John (2019 on) '
+            'are listed separately even though John took over Brad\'s team.</p>'
+            f'<script>window.WG_H2H = {jdump({"m": mgrs, "g": data})};</script>')
+
+
+def team_h2h_table(L, games, manager, mlink, table):
+    rows = h2h_summary(games, manager, ("r",))
+    if not rows:
+        return ""
+    trs = []
+    for r in rows:
+        s, w, pf, pa = r["last"]
+        res = "W" if pf > pa else "L" if pf < pa else "T"
+        trs.append([mlink(r["opp"]), str(r["g"]), f'{r["w"]}-{r["l"]}' + (f'-{r["t"]}' if r["t"] else ""),
+                    f'{(r["w"] + r["t"] / 2) / r["g"]:.3f}'.lstrip("0"), f'{r["pf"]:.1f}-{r["pa"]:.1f}', r["streak"],
+                    f'{s} wk {w}: {res} {pf:.1f}-{pa:.1f}'])
+    return ("<h2>Head-to-head (regular season)</h2>" +
+            table(["Opponent", "Games", "Record", "Win %", "Avg score", "Streak", "Last meeting"], trs, num=(1, 3)) +
+            '<p class="note">Full grid, playoffs and every meeting on the <a href="#" data-target="h2h">Head-to-head</a> page.</p>')
+
+
+H2H_CSS = """
+.h2h-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.h2h-grid { display: grid; gap: 3px; min-width: 760px; font-size: 12px; margin: 8px 0 6px; }
+.h2h-h { font-size: 11px; font-weight: 700; color: var(--blue-800); text-align: center; padding: 4px 0; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.h2h-r { font-size: 12px; font-weight: 600; color: #1d1d1f; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; cursor: pointer; white-space: nowrap; }
+.h2h-c { border-radius: 5px; text-align: center; padding: 6px 2px; font-variant-numeric: tabular-nums; font-weight: 600; cursor: pointer; line-height: 1.15; }
+.h2h-c small { display: block; font-size: 9.5px; font-weight: 500; opacity: .8; }
+.h2h-c.dark { color: #fff; }
+.h2h-c.faint { opacity: .45; }
+.h2h-c.self { background: repeating-linear-gradient(45deg, #f4f4f6, #f4f4f6 4px, #ebebed 4px, #ebebed 8px); cursor: default; }
+.h2h-c.on, .h2h-r.on, .h2h-h.on { outline: 2px solid #0D3A66; outline-offset: -1px; }
+.h2h-rowsel { background: #eef4ff; border-radius: 4px; }
+.h2h-bar { display: inline-block; width: 70px; height: 8px; background: #f2a3a3; border-radius: 4px; overflow: hidden; vertical-align: middle; margin-right: 6px; }
+.h2h-bar i { display: block; height: 100%; background: #1761A0; }
+.h2h-games { font-size: 12px; color: var(--gray-600); line-height: 1.6; }
+.h2h-games b.w { color: #0D3A66; } .h2h-games b.l { color: #b42318; }
+"""
+
+H2H_JS = r"""
+(function(){
+  const D = window.WG_H2H, grid = document.getElementById('h2h-grid');
+  if (!D || !grid) return;
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+  const M = D.m, n = M.length, sel = document.getElementById('h2h-mgr');
+  let kind = 'r', me = +sel.value, focus = null;
+  function mix(a, b, t) { const p = c => [1,3,5].map(i => parseInt(c.slice(i, i+2), 16)); const x = p(a), y = p(b);
+    return '#' + x.map((v, i) => Math.round(v + (y[i] - v) * t).toString(16).padStart(2, '0')).join(''); }
+  function fill(p) { const t = Math.max(-1, Math.min(1, (p - .5) / .3));
+    return t >= 0 ? (t < .5 ? mix('#f0efec', '#86b6ef', t * 2) : mix('#86b6ef', '#1761A0', (t - .5) * 2))
+                  : (-t < .5 ? mix('#f0efec', '#f2a3a3', -t * 2) : mix('#f2a3a3', '#e34948', (-t - .5) * 2)); }
+  function games(a, b) {
+    return D.g.filter(g => (kind === 'a' || (kind === 'p') === !!g[2]) && ((g[3] === a && g[4] === b) || (g[3] === b && g[4] === a)))
+      .map(g => g[3] === a ? {s: g[0], w: g[1], p: g[2], f: g[5], x: g[6]} : {s: g[0], w: g[1], p: g[2], f: g[6], x: g[5]});
+  }
+  function rec(gs) { const w = gs.filter(g => g.f > g.x).length, l = gs.filter(g => g.f < g.x).length; return {w, l, t: gs.length - w - l, g: gs.length}; }
+  const pct = r => r.g ? (r.w + r.t / 2) / r.g : .5;
+  const rs = r => `${r.w}-${r.l}${r.t ? '-' + r.t : ''}`;
+  function drawGrid() {
+    grid.style.gridTemplateColumns = `76px repeat(${n}, minmax(0, 1fr))`;
+    let h = '<div></div>' + M.map((m, j) => `<div class="h2h-h${j === me ? ' on' : ''}" data-m="${j}">${esc(m)}</div>`).join('');
+    M.forEach((a, i) => {
+      h += `<div class="h2h-r${i === me ? ' on' : ''}" data-m="${i}">${esc(a)}</div>`;
+      M.forEach((b, j) => {
+        if (i === j) { h += '<div class="h2h-c self"></div>'; return; }
+        const r = rec(games(i, j));
+        if (!r.g) { h += '<div class="h2h-c" style="background:#fafafa;color:#c5c9d2">-</div>'; return; }
+        const p = pct(r), dark = Math.abs(p - .5) > .2;
+        const tip = `<b>${esc(a)} vs ${esc(b)}</b><br>${rs(r)} in ${r.g} game${r.g > 1 ? 's' : ''} (${(p * 100).toFixed(0)}%)`;
+        h += `<div class="h2h-c${dark ? ' dark' : ''}${r.g < 3 ? ' faint' : ''}${i === me && j === focus ? ' on' : ''}" style="background:${fill(p)}" data-a="${i}" data-b="${j}" data-tip="${esc(tip)}">${rs(r)}<small>${(p * 100).toFixed(0)}%</small></div>`;
+      });
+    });
+    grid.innerHTML = h;
+    grid.querySelectorAll('[data-m]').forEach(el => el.addEventListener('click', () => { me = +el.dataset.m; sel.value = me; focus = null; drawAll(); }));
+    grid.querySelectorAll('.h2h-c[data-a]').forEach(el => el.addEventListener('click', () => { me = +el.dataset.a; focus = +el.dataset.b; sel.value = me; drawAll(); }));
+  }
+  function drawDetail() {
+    const label = {r: 'regular season', p: 'playoffs', a: 'regular season and playoffs'}[kind];
+    document.getElementById('h2h-h').textContent = `${M[me]} against everyone (${label})`;
+    const rows = M.map((b, j) => j === me ? null : {j, gs: games(me, j)}).filter(x => x && x.gs.length)
+      .map(x => Object.assign(x, rec(x.gs))).sort((a, b) => pct(b) - pct(a) || b.g - a.g);
+    if (!rows.length) { document.getElementById('h2h-detail').innerHTML = '<p class="note">No games of this kind.</p>'; return; }
+    const tot = rows.reduce((t, r) => ({w: t.w + r.w, l: t.l + r.l, t: t.t + r.t, g: t.g + r.g}), {w: 0, l: 0, t: 0, g: 0});
+    const body = rows.map(r => {
+      const gs = r.gs, last = gs[gs.length - 1];
+      let st = 0, k = null; for (let i = gs.length - 1; i >= 0; i--) { const x = gs[i].f > gs[i].x ? 'W' : gs[i].f < gs[i].x ? 'L' : 'T'; if (k === null) k = x; if (x !== k) break; st++; }
+      const best = gs.reduce((a, g) => (g.f - g.x > a.f - a.x ? g : a)), worst = gs.reduce((a, g) => (g.f - g.x < a.f - a.x ? g : a));
+      const pf = gs.reduce((s, g) => s + g.f, 0) / gs.length, pa = gs.reduce((s, g) => s + g.x, 0) / gs.length;
+      const open = r.j === focus;
+      const list = open ? `<tr class="h2h-rowsel"><td colspan="8"><div class="h2h-games">` + gs.slice().reverse().map(g =>
+        `${g.s} wk ${g.w}${g.p ? ' (playoffs)' : ''}: <b class="${g.f > g.x ? 'w' : 'l'}">${g.f > g.x ? 'W' : g.f < g.x ? 'L' : 'T'}</b> ${g.f.toFixed(2)}-${g.x.toFixed(2)}`).join(' &middot; ') + '</div></td></tr>' : '';
+      return `<tr class="${open ? 'h2h-rowsel' : ''}" data-j="${r.j}" style="cursor:pointer"><td><b>${esc(M[r.j])}</b></td><td class="num">${r.g}</td>` +
+        `<td class="num"><span class="h2h-bar"><i style="width:${(pct(r) * 100).toFixed(0)}%"></i></span><b>${rs(r)}</b></td><td class="num">${pct(r).toFixed(3).replace(/^0/, '')}</td>` +
+        `<td class="num">${pf.toFixed(1)}-${pa.toFixed(1)}</td><td>${k}${st}</td>` +
+        `<td class="tl-small">${best.f > best.x ? `+${(best.f - best.x).toFixed(1)} (${best.s})` : '-'}</td>` +
+        `<td class="tl-small">${worst.f < worst.x ? `${(worst.f - worst.x).toFixed(1)} (${worst.s})` : '-'}</td></tr>` + list;
+    }).join('');
+    document.getElementById('h2h-detail').innerHTML = `<p class="note">Overall: <b>${rs(tot)}</b> (${pct(tot).toFixed(3).replace(/^0/, '')}). Tap a row to see every meeting.</p>` +
+      `<div class="table-scroll"><table class="roster"><thead><tr><th>Opponent</th><th class="num">Games</th><th class="num">Record</th><th class="num">Win %</th>` +
+      `<th class="num">Avg score</th><th>Streak</th><th>Biggest win</th><th>Worst loss</th></tr></thead><tbody>${body}</tbody></table></div>`;
+    document.querySelectorAll('#h2h-detail tr[data-j]').forEach(tr => tr.addEventListener('click', () => { focus = focus === +tr.dataset.j ? null : +tr.dataset.j; drawAll(); }));
+  }
+  function drawAll() { drawGrid(); drawDetail(); }
+  sel.addEventListener('change', () => { me = +sel.value; focus = null; drawAll(); });
+  document.querySelectorAll('#h2h-kind .vb-chip').forEach(b => b.addEventListener('click', () => {
+    kind = b.dataset.k; document.querySelectorAll('#h2h-kind .vb-chip').forEach(x => x.classList.toggle('is-on', x === b)); drawAll(); }));
+  drawAll();
 })();
 """

@@ -342,8 +342,6 @@ DYN_CSS = """
   .vb-row { grid-template-columns: 1fr; gap: 4px; }
   .vb-card { width: calc(50% - 3px); }
   .tl-table:not(.fl-table) th:nth-child(2), .tl-table:not(.fl-table) td:nth-child(2) { display: none; }
-  .fl-table th:nth-child(1), .fl-table td:nth-child(1), .fl-table th:nth-child(6), .fl-table td:nth-child(6),
-  .fl-table th:nth-child(8), .fl-table td:nth-child(8) { display: none; }
   .fl-loser { white-space: normal; }
 }
 """
