@@ -111,7 +111,7 @@ EXTRA_CSS = """
 .tag.vetoed { background: #fdecea; color: #b42318; }
 .pos-good { color: #1c7a4a; font-weight: 600; }
 .pos-bad { color: #b42318; font-weight: 600; }
-.ps-wrap input { width: 100%; max-width: 420px; padding: 10px 12px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 15px; }
+.ps-wrap { max-width: 560px; }
 .ps-card { border: 1px solid var(--gray-200); border-radius: 10px; padding: 12px 16px; margin: 10px 0; }
 .ps-card h3 { margin: 0 0 6px; font-size: 15px; }
 .ps-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
@@ -533,12 +533,9 @@ def sec_positional(L):
 
 
 def sec_search(L, C):
-    top = sorted(C.values(), key=lambda p: -p["t"])[:15]
-    lead = V.hbars([(p["n"], p["t"], f'<b>{e(p["n"])}</b> ({e(p["p"])})<br>{p["t"]:,.0f} pts across {len(p["s"])} seasons on WG rosters')
-                    for p in top], "Most points ever scored on a We Graduated roster", "Rostered weeks only, 2012 on. Search below for anyone else.")
     return section("player-search", "Player search",
-                   "Every player who has been on a We Graduated roster: how he scored, who had him, and how he got there.",
-                   F.search_body(L, C, lead))
+                   "Every player who has been on a We Graduated roster: the all-time leaders, how each one scored, who had him, and how he got there.",
+                   F.search_body(L, C, ""))
 
 
 def sec_h2h(L, games):

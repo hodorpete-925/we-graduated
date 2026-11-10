@@ -44,13 +44,27 @@ def corpus_script(L):
     return C, f"<script>window.WG_PC = {jdump(list(C.values()))};</script>"
 
 
-def search_body(L, C, leaderboard_html):
-    return (leaderboard_html +
-            '<div class="ps-wrap"><input id="wg-ps" class="ps-input" type="search" placeholder="Search any player since 2012 (two letters or more)" autocomplete="off"></div>'
+def search_body(L, C, leaderboard_html=""):
+    pos = "".join(f'<button type="button" class="vb-chip{" is-on" if p == "" else ""}" data-pos="{p}">{p or "All"}</button>'
+                  for p in ["", "QB", "RB", "WR", "TE", "K", "DEF"])
+    mgr = "".join(f'<option value="{e(m)}">{e(m)}</option>' for m in L.managers)
+    nfl = sorted({p["nfl"] for p in C.values() if p["nfl"]})
+    nflo = "".join(f'<option value="{e(t)}">{e(t)}</option>' for t in nfl)
+    yrs = "".join(f'<option value="{y}">{y}</option>' for y in reversed(L.years))
+    return ('<div class="vb-filters ps-filters"><div class="vb-filter vb-chips" id="ps-pos">' + pos + '</div>'
+            f'<label class="vb-filter">Manager <select id="ps-mgr"><option value="">Anyone</option>{mgr}</select></label>'
+            f'<label class="vb-filter">NFL team <select id="ps-nfl"><option value="">Any</option>{nflo}</select></label>'
+            f'<label class="vb-filter">Season <select id="ps-yr"><option value="">All-time</option>{yrs}</select></label></div>'
+            '<div class="viz"><div class="viz-title" id="ps-lead-t"></div><div class="viz-sub" id="ps-lead-s"></div>'
+            '<div id="ps-lead" class="hb"></div><button type="button" class="tl-more" id="ps-more" hidden>Show more</button></div>'
+            '<h2>Find a player</h2>'
+            '<div class="ps-wrap"><input id="wg-ps" class="ps-input" type="search" placeholder="Search any player since 2012" autocomplete="off"></div>'
+            '<div class="ps-input-meta" id="ps-meta">Type two letters or more. The position, manager and team filters above apply here too. Tap a name in the leaders list to open his card.</div>'
             '<div id="wg-ps-out" class="ps-results"></div>'
             '<p class="note">Points, games and positional ranks count only weeks a player was on a We Graduated roster '
             '(Yahoo only reports rostered players), so "WR14" means 14th among rostered receivers that season. '
-            'Games skip weeks parked on IR.</p>')
+            'Games skip weeks parked on IR. "Manager" counts only the points a player scored on that manager\'s roster. '
+            'NFL team is the player\'s team today (Yahoo doesn\'t give us past teams).</p>')
 
 
 def compare_body():
@@ -278,7 +292,10 @@ def live_block(L):
 # ---------------------------------------------------------------- CSS + JS
 
 FEAT_CSS = """
-.ps-wrap { margin: 18px 0 10px; }
+.ps-wrap { margin: 10px 0 0; max-width: 560px; }
+.hb-click { cursor: pointer; }
+.hb-click:hover .hb-lab { color: #1761A0; text-decoration: underline; }
+.ps-filters { margin-top: 14px; }
 .ps-results { margin-top: 10px; }
 .pc2 { border: 1px solid var(--gray-200); border-radius: 12px; padding: 16px 18px; background: #fff; margin-bottom: 14px; }
 .pc2-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
@@ -436,12 +453,49 @@ FEAT_JS = r"""
   PC.forEach(p => p._k = norm(p.n));
   function find(q, n) { q = norm(q.trim()); if (q.length < 2) return []; return PC.filter(p => p._k.includes(q)).sort((a, b) => b.t - a.t).slice(0, n); }
 
-  // ---------- search
+  // ---------- search + leaders (shared filters)
   const box = document.getElementById('wg-ps'), out = document.getElementById('wg-ps-out');
-  if (box) box.addEventListener('input', () => {
-    const hits = find(box.value, 8);
-    out.innerHTML = box.value.trim().length < 2 ? '' : (hits.map(card).join('') || '<p class="note">No player by that name has been on a WG roster since 2012.</p>');
-  });
+  const F = {pos: '', mgr: '', nfl: '', yr: ''};
+  let leadN = 15;
+  const fpos = p => !F.pos || p.p === F.pos, fnfl = p => !F.nfl || p.nfl === F.nfl;
+  function ptsFor(p) {       // points under the current manager / season filters
+    let t = 0, g = 0;
+    p.s.forEach(l => { if (F.yr && l.y !== +F.yr) return;
+      if (F.mgr) { const x = (l.mp || []).find(q => q[0] === F.mgr); if (x) { t += x[1]; g++; } } else { t += l.pts; g++; } });
+    return [t, g];
+  }
+  function drawLeaders() {
+    const el = document.getElementById('ps-lead'); if (!el) return;
+    const rows = PC.filter(p => fpos(p) && fnfl(p)).map(p => [p, ...ptsFor(p)]).filter(r => r[1] > 0).sort((a, b) => b[1] - a[1]);
+    const top = rows.slice(0, leadN), max = top.length ? top[0][1] : 1;
+    const who = [F.pos || 'Players', F.nfl ? `(${F.nfl} today)` : ''].filter(Boolean).join(' ');
+    document.getElementById('ps-lead-t').textContent = `${F.yr ? F.yr : 'All-time'} leaders: ${who}${F.mgr ? ' on ' + F.mgr + "'s rosters" : ' on WG rosters'}`;
+    document.getElementById('ps-lead-s').textContent = `Points scored while on a roster${F.mgr ? ' (' + F.mgr + "'s only)" : ''}. ${rows.length} players match. Tap a name for his card.`;
+    el.innerHTML = top.map(([p, t, g]) => `<div class="hb-row hb-click" data-id="${p.id}" data-tip="<b>${esc(p.n)}</b> ${p.p}${p.nfl ? ' \u00b7 ' + p.nfl : ''}<br>${t.toFixed(1)} pts in ${g} season${g > 1 ? 's' : ''}${p.own ? '<br>Now on ' + esc(p.own) + "'s roster" : ''}">` +
+      `<span class="hb-lab">${esc(p.n)}</span><span class="hb-track"><span class="hb-bar" style="width:calc((100% - 52px) * ${(t / max).toFixed(4)});background:#1761A0"></span>` +
+      `<span class="hb-val">${Math.round(t).toLocaleString()}</span></span></div>`).join('') || '<p class="note">No players match these filters.</p>';
+    el.classList.add('hb-wide');
+    const more = document.getElementById('ps-more');
+    more.hidden = rows.length <= leadN; more.textContent = leadN < 50 ? 'Show top 50' : 'Show top 100';
+    el.querySelectorAll('.hb-click').forEach(r => r.addEventListener('click', () => {
+      const p = BY[r.dataset.id]; out.innerHTML = card(p); box.value = p.n; out.scrollIntoView({behavior: 'smooth', block: 'start'}); }));
+  }
+  function drawSearch() {
+    if (!box) return;
+    if (box.value.trim().length < 2) { if (!out.dataset.pinned) out.innerHTML = ''; return; }
+    const q = norm(box.value.trim());
+    const hits = PC.filter(p => p._k.includes(q) && fpos(p) && fnfl(p) && (!F.mgr || p.s.some(l => (l.mp || []).some(x => x[0] === F.mgr))))
+                   .sort((a, b) => b.t - a.t).slice(0, 8);
+    out.innerHTML = hits.map(card).join('') || '<p class="note">No player matches that name and these filters.</p>';
+  }
+  if (box) {
+    box.addEventListener('input', drawSearch);
+    document.querySelectorAll('#ps-pos .vb-chip').forEach(b => b.addEventListener('click', () => {
+      F.pos = b.dataset.pos; document.querySelectorAll('#ps-pos .vb-chip').forEach(x => x.classList.toggle('is-on', x === b)); leadN = 15; drawLeaders(); drawSearch(); }));
+    [['ps-mgr', 'mgr'], ['ps-nfl', 'nfl'], ['ps-yr', 'yr']].forEach(([id, k]) => document.getElementById(id).addEventListener('change', ev => { F[k] = ev.target.value; leadN = 15; drawLeaders(); drawSearch(); }));
+    document.getElementById('ps-more').addEventListener('click', () => { leadN = leadN < 50 ? 50 : 100; drawLeaders(); });
+    drawLeaders();
+  }
 
   // ---------- compare
   const COLS = ['#1761A0', '#e1b523', '#2f9e8f'];

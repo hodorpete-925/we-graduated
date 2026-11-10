@@ -148,14 +148,24 @@ def faab_ledger(L, mlink, offers_doc):
         trs = []
         for m, s in ranked:
             ef = eff(s)
-            bb = f'{e(s["best"]["player"])} ({_sgn(s["best"]["fpor"])} for ${s["best"]["bid"]})' if s["best"] else ""
-            ww = f'{e(s["worst"]["player"])} ({_sgn(s["worst"]["fpor"])} for ${s["worst"]["bid"]})' if s["worst"] and s["worst"] is not s["best"] else ""
-            row = [mlink(m), str(s["won"]), str(s["lost"]), f'${s["spent"]}', f'${s["over"]}', _sgn(s["fpor"]),
-                   f'<b>{"<span class=tl-via>under $10</span>" if ef is None else f"{ef:+.2f}"}</b>']
+            def short(c, arrow):
+                nm = c["player"].replace(" Jr.", "").replace(" Sr.", "").replace(" II", "").replace(" III", "")
+                nm = nm if c["pos"] == "DEF" else nm.split()[-1]
+                return f'<span class="fl-b"><span style="color:{"#1761A0" if "9650" in arrow else "#e34948"}">{arrow}</span> {e(nm)} {c["fpor"]:+.0f} (${c["bid"]})</span>'
+            subs = ""
+            if s["best"]:
+                subs += short(s["best"], "&#9650;")
+            if s["worst"] and s["worst"] is not s["best"]:
+                subs += short(s["worst"], "&#9660;")
+            tipd = (f'<b>{e(m)}</b>' + (f'<br>Best buy: {e(s["best"]["player"])}, {_sgn(s["best"]["fpor"])} FPOR for ${s["best"]["bid"]}' if s["best"] else "")
+                    + (f'<br>Worst buy: {e(s["worst"]["player"])}, {_sgn(s["worst"]["fpor"])} FPOR for ${s["worst"]["bid"]}' if s["worst"] and s["worst"] is not s["best"] else ""))
+            subs = f'<span class="fl-buy" data-tip="{e(tipd)}">{subs}</span>' if subs else ""
+            row = [f'{mlink(m)}{subs}', str(s["won"]), str(s["lost"]), f'${s["spent"]}', f'${s["over"]}', _sgn(s["fpor"]),
+                   f'<b>{"<span class=tl-via>&lt;$10</span>" if ef is None else f"{ef:+.2f}"}</b>']
             if left:
                 row.append(f'${left.get(m, "")}')
-            trs.append(row + [f'<span class="tl-small">{bb}</span>', f'<span class="tl-small">{ww}</span>'])
-        hd = ["Manager", "Won", "Outbid", "Spent", "Overpay", "FPOR bought", "FPOR / $"] + (["FAAB left"] if left else []) + ["Best buy", "Worst buy"]
+            trs.append(row)
+        hd = ["Manager", "Won", "Lost", "Spent", "Over&shy;pay", "FPOR", "Per $"] + (["Left"] if left else [])
         pts = [(s["spent"], round(s["fpor"], 1), m,
                 f'<b>{e(m)}</b><br>${s["spent"]} on {s["won"]} claims<br>{_sgn(s["fpor"])} FPOR' + (f'<br>{eff(s):+.2f} per $' if eff(s) is not None else ""),
                 V.ACCENT if s["fpor"] >= 0 else V.NEG) for m, s in S.items() if s["won"]]
@@ -190,7 +200,7 @@ def faab_ledger(L, mlink, offers_doc):
             '<div class="table-scroll"><table class="tl-table fl-table"><thead><tr><th>Processed</th><th>Winner</th><th>Player</th><th class="num">Bid</th>'
             '<th>Other offers</th><th class="num">Over</th><th>Since pickup</th><th class="num">Pts / $</th></tr></thead><tbody id="fl-body"></tbody></table></div>'
             '<h2>Across seasons</h2><div class="viz-grid2">' + trend + spend + '</div>'
-            '<p class="note">FPOR per $ is fantasy points over replacement the claimed players produced for that manager, divided by FAAB spent; '
+            '<p class="note">In the efficiency table, Won is claims won, Lost is claims where another team outbid you, and Left is FAAB still in the bank. Under each name: &#9650; best buy and &#9660; worst buy (FPOR, then what was paid); tap for the full names. FPOR per $ ("Per $") is fantasy points over replacement the claimed players produced for that manager, divided by FAAB spent; '
             'managers under $10 are not ranked. Overpay is the gap between a winning bid and the next-best real offer (claims nobody else bid on count as $0 over). '
             '"Since pickup" counts only the run of weeks the player stayed on the claiming team. Winning bids come from the Yahoo API; losing offers from Yahoo\'s '
             'FAB Offers page for every season, read Nov 9, 2026. Free-agent adds (no waiver period) are not claims; see the transaction log.</p>'
@@ -335,6 +345,11 @@ DYN_CSS = """
 .tl-out { color: #b42318; }
 .tl-via, .tl-small { color: var(--gray-500); font-size: 12px; }
 .tl-side { line-height: 1.4; }
+.fl-summary .fl-buy { display: block; font-size: 10.5px; color: var(--gray-500); line-height: 1.35; margin-top: 2px; white-space: normal; }
+.fl-summary .fl-b { white-space: nowrap; margin-right: 8px; }
+@media (max-width: 720px) { .fl-summary .fl-b { display: block; margin-right: 0; } .fl-summary td:first-child { min-width: 0; } }
+.fl-summary td:first-child { min-width: 128px; }
+.fl-summary td, .fl-summary th { padding-top: 8px !important; padding-bottom: 8px !important; }
 .fl-loser { font-size: 12.5px; line-height: 1.4; white-space: nowrap; }
 .fl-list { font-size: 13.5px; line-height: 1.6; margin: 0 0 6px 18px; padding: 0; }
 .tl-more { font: inherit; font-size: 13px; margin: 10px 0; padding: 6px 14px; border-radius: 8px; border: 1px solid #d8d8dc; background: #fff; cursor: pointer; color: var(--blue-800); font-weight: 600; }

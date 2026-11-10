@@ -39,6 +39,7 @@ def build(L):
     weekly = defaultdict(dict)            # (pid, season) -> {week: pts}
     games = defaultdict(int)
     owners = defaultdict(list)            # (pid, season) -> [mgr in roster order]
+    by_mgr = defaultdict(lambda: defaultdict(float))   # (pid, season) -> {mgr: pts}
     for pid, s, wk, pts, tsid, slot in c.execute(
             "SELECT player_id, season, week, fantasy_points, team_season_id, selected_position "
             "FROM player_weekly_stats ORDER BY season, week"):
@@ -46,6 +47,7 @@ def build(L):
         if slot != "IR":
             games[(pid, s)] += 1
         m = L.mgr(tsid)
+        by_mgr[(pid, s)][m] += pts or 0.0
         if not owners[(pid, s)] or owners[(pid, s)][-1] != m:
             owners[(pid, s)].append(m)
     season_pts = {k: sum(v.values()) for k, v in weekly.items()}
@@ -104,7 +106,8 @@ def build(L):
         lines = []
         for s in seasons:
             lines.append({"y": s, "pts": round(season_pts.get((pid, s), 0.0), 1), "g": games.get((pid, s), 0),
-                          "rk": rank.get((pid, s)), "m": owners.get((pid, s)) or [], "how": how.get(s, "")})
+                          "rk": rank.get((pid, s)), "m": owners.get((pid, s)) or [], "how": how.get(s, ""),
+                          "mp": [[m, round(v, 1)] for m, v in by_mgr.get((pid, s), {}).items()]})
         recent = [s for s in seasons if (pid, s) in weekly][:3]
         wk = {}
         for s in recent:
