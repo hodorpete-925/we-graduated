@@ -609,7 +609,7 @@ def sec_drafts(L):
                             table(["Rd", "Pick", "Manager", "Player", "Pos", "Season pts"], rows, num=(0, 1, 5)), open_=i == 0)
     body += '<p class="note">Keepers fill each team\'s last six slots (Rounds 10 to 15; Rounds 11 to 16 in 2020). Season points count weeks on any roster in this league.</p>'
     body = ('<h2 style="margin-top:6px">Draft board</h2><p class="note">Every pick laid out like the draft room: one column per draft slot, one row per round, with the manager who made each pick (traded picks show up under the slot they came from). '
-            'Shaded by how each player did against what that slot usually returns (FPOR, same as the value board), or by position. Hover or tap a square.</p>'
+            'Each square shows the player\'s FPOR (points over a replacement-level player). Shade by value vs. what that slot usually returns, by raw FPOR, or by position. Hover or tap a square for details.</p>'
             + board + "<h2>Season by season</h2>" + body)
     return section("drafts", "Draft results", "Every pick since 2012, keepers marked.", body)
 

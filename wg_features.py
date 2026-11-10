@@ -205,6 +205,7 @@ def draft_board_body(L):
     opts = "".join(f'<option value="{y}"{" selected" if y == L.current else ""}>{y}</option>' for y in reversed(years))
     return (f'<div class="vb-filters"><label class="vb-filter yr-pick">Season <select id="db-season">{opts}</select></label>'
             '<div class="vb-filter vb-chips" id="db-color"><button type="button" class="vb-chip is-on" data-c="z">Color: value vs. slot</button>'
+            '<button type="button" class="vb-chip" data-c="f">Color: FPOR</button>'
             '<button type="button" class="vb-chip" data-c="pos">Color: position</button></div></div>'
             '<div id="db-legend"></div><div class="db-wrap"><div id="db-grid" class="db-grid"></div></div>')
 
@@ -345,7 +346,8 @@ FEAT_CSS = """
 .db-c.keeper { box-shadow: inset 0 0 0 1.5px rgba(13,58,102,.45); }
 .db-n { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .db-s { color: rgba(0,0,0,.6); font-size: 10px; }
-.db-m { font-size: 10px; font-weight: 700; color: rgba(0,0,0,.72); }
+.db-m { font-size: 10px; font-weight: 700; color: rgba(0,0,0,.72); display: flex; justify-content: space-between; gap: 4px; }
+.db-f { font-variant-numeric: tabular-nums; font-weight: 700; }
 .db-c.dark .db-m { color: #fff; }
 .db-sep { grid-column: 1 / -1; font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--gray-500); padding: 8px 0 2px; }
 .upd { margin: 30px 0 10px; font-size: 12px; color: var(--gray-600); border-top: 1px solid var(--gray-200); padding-top: 10px; }
@@ -528,6 +530,8 @@ FEAT_JS = r"""
       // snake if the last pick of round 1 also makes the first pick of round 2
       const snake = byRd[rounds[1]] && byRd[rounds[1]][0] && r1.length && byRd[rounds[1]][0][2] === r1[n - 1][2];
       grid.style.gridTemplateColumns = `44px repeat(${n}, minmax(0, 1fr))`;
+      const played = picks.filter(r => r[6] >= 2).map(r => r[8]);
+      const fsd = Math.sqrt(played.reduce((a, v) => a + v * v, 0) / Math.max(played.length, 1)) || 1;   // spread of FPOR around replacement
       let h = '<div></div>' + order.map((m, i) => `<div class="db-h">Slot ${i + 1}</div>`).join('');
       rounds.forEach(rd => {
         if (rd === D.k1) h += `<div class="db-sep">Keepers (rounds ${D.k1}+), placed at the back of the draft</div>`;
@@ -537,16 +541,20 @@ FEAT_JS = r"""
         row.forEach((r, i) => { cells[snake && (rd - rounds[0]) % 2 ? n - 1 - i : i] = r; });
         cells.forEach((r, col) => {
           if (!r) { h += '<div class="db-c"></div>'; return; }
-          const bg = mode === 'z' ? zf(r[10]) : POSC[r[1]] || '#c5c9d2';
-          const dark = mode === 'z' ? (r[10] != null && Math.abs(r[10]) > 1.3) : ['RB', 'DEF'].includes(r[1]);
+          const fz = r[6] >= 2 ? r[8] / fsd : null;
+          const bg = mode === 'z' ? zf(r[10]) : mode === 'f' ? zf(fz) : POSC[r[1]] || '#c5c9d2';
+          const dark = mode === 'z' ? (r[10] != null && Math.abs(r[10]) > 1.3) : mode === 'f' ? (fz != null && Math.abs(fz) > 1.3) : ['RB', 'DEF'].includes(r[1]);
+          const fp = `${r[8] >= 0 ? '+' : ''}${Math.round(r[8])}`;
           const via = '';
           const tip = `<b>${esc(r[0])}</b> ${r[1]}<br>${esc(r[2])}, ${r[3] ? 'keeper' : 'pick ' + r[5]}<br>${r[7]} pts in ${r[6]} g<br>FPOR ${r[8] >= 0 ? '+' : ''}${r[8]}` + (r[10] != null ? `<br>${r[10] >= 0 ? '+' : ''}${r[10]} sd vs ${r[3] ? 'avg keeper' : 'slot'}` : '');
-          h += `<div class="db-c${dark ? ' dark' : ''}${r[3] ? ' keeper' : ''}" style="background:${bg}" data-tip="${esc(tip)}"><div class="db-n">${esc(r[0])}</div><div class="db-s">${r[1]} \u00b7 ${r[3] ? 'K' : '#' + r[5]}</div><div class="db-m">${esc(r[2])}</div></div>`;
+          h += `<div class="db-c${dark ? ' dark' : ''}${r[3] ? ' keeper' : ''}" style="background:${bg}" data-tip="${esc(tip)}"><div class="db-n">${esc(r[0])}</div><div class="db-s">${r[1]} \u00b7 ${r[3] ? 'K' : '#' + r[5]}</div><div class="db-m">${esc(r[2])}<span class="db-f">${fp}</span></div></div>`;
         });
       });
       grid.innerHTML = h;
       document.getElementById('db-legend').innerHTML = mode === 'z'
-        ? '<div class="vb-legend"><span>Below the slot</span><span class="vb-legend-bar"></span><span>Above the slot</span><span class="tl-via">Keepers are shaded against the average keeper.</span></div>'
+        ? '<div class="vb-legend"><span>Below the slot</span><span class="vb-legend-bar"></span><span>Above the slot</span><span class="tl-via">Keepers are shaded against the average keeper. The number in each square is the player\'s FPOR.</span></div>'
+        : mode === 'f'
+        ? '<div class="vb-legend"><span>Below replacement</span><span class="vb-legend-bar"></span><span>Above replacement</span><span class="tl-via">Raw FPOR, no adjustment for draft slot. Gray = about replacement level or under 2 games.</span></div>'
         : '<div class="viz-legend">' + Object.entries(POSC).map(([k, c]) => `<span><i style="background:${c}"></i>${k}</span>`).join('') + '</div>';
     }
     dsel.addEventListener('change', draw);
