@@ -121,21 +121,24 @@ def value_board(L, mlink):
 # ------------------------------------------------------------------ FAAB ledger
 
 def faab_ledger(L, mlink, offers_doc):
-    data, panes = {}, ""
+    """Same markup as I Yearn's render_faab_ledger (value_board_sections.py), one
+    pane per season. WG-only charts sit after the I Yearn content."""
+    data, panes, cpanes = {}, "", ""
     hist = []
     for y in L.years:
         claims, meta = W.faab_claims(L.c, L, y, offers_doc)
         if not claims:
             continue
-        S = defaultdict(lambda: {"spent": 0, "won": 0, "lost": 0, "over": 0, "fpor": 0.0, "best": None, "worst": None})
+        blank = lambda: {"spent": 0, "won": 0, "lost": 0, "over": 0, "fpor": 0.0, "best": None, "worst": None}
+        S = {t["manager"]: blank() for t in L.teams_in(y)}
         for c in claims:
-            s = S[c["mgr"]]
+            s = S.setdefault(c["mgr"], blank())
             s["spent"] += c["bid"]; s["won"] += 1; s["fpor"] += c["fpor"]; s["over"] += c["over"] or 0
             if c["games"]:
                 if s["best"] is None or c["fpor"] > s["best"]["fpor"]: s["best"] = c
                 if s["worst"] is None or c["fpor"] < s["worst"]["fpor"]: s["worst"] = c
             for m, b, r in c["losers"]:
-                S[m]["lost"] += 1
+                S.setdefault(m, blank())["lost"] += 1
         MIN = 10
         eff = lambda s: s["fpor"] / s["spent"] if s["spent"] >= MIN else None
         ranked = sorted(S.items(), key=lambda kv: (eff(kv[1]) is None, -(eff(kv[1]) or 0), -kv[1]["spent"]))
@@ -148,62 +151,53 @@ def faab_ledger(L, mlink, offers_doc):
         trs = []
         for m, s in ranked:
             ef = eff(s)
-            def short(c, arrow):
-                nm = c["player"].replace(" Jr.", "").replace(" Sr.", "").replace(" II", "").replace(" III", "")
-                nm = nm if c["pos"] == "DEF" else nm.split()[-1]
-                return f'<span class="fl-b"><span style="color:{"#1761A0" if "9650" in arrow else "#e34948"}">{arrow}</span> {e(nm)} {c["fpor"]:+.0f} (${c["bid"]})</span>'
-            subs = ""
-            if s["best"]:
-                subs += short(s["best"], "&#9650;")
-            if s["worst"] and s["worst"] is not s["best"]:
-                subs += short(s["worst"], "&#9660;")
-            tipd = (f'<b>{e(m)}</b>' + (f'<br>Best buy: {e(s["best"]["player"])}, {_sgn(s["best"]["fpor"])} FPOR for ${s["best"]["bid"]}' if s["best"] else "")
-                    + (f'<br>Worst buy: {e(s["worst"]["player"])}, {_sgn(s["worst"]["fpor"])} FPOR for ${s["worst"]["bid"]}' if s["worst"] and s["worst"] is not s["best"] else ""))
-            subs = f'<span class="fl-buy" data-tip="{e(tipd)}">{subs}</span>' if subs else ""
-            row = [f'{mlink(m)}{subs}', str(s["won"]), str(s["lost"]), f'${s["spent"]}', f'${s["over"]}', _sgn(s["fpor"]),
-                   f'<b>{"<span class=tl-via>&lt;$10</span>" if ef is None else f"{ef:+.2f}"}</b>']
-            if left:
-                row.append(f'${left.get(m, "")}')
-            trs.append(row)
-        hd = ["Manager", "Won", "Lost", "Spent", "Over&shy;pay", "FPOR", "Per $"] + (["Left"] if left else [])
+            best = f'{e(s["best"]["player"])} ({s["best"]["fpor"]:+.1f} for ${s["best"]["bid"]})' if s["best"] else ""
+            worst = (f'{e(s["worst"]["player"])} ({s["worst"]["fpor"]:+.1f} for ${s["worst"]["bid"]})'
+                     if s["worst"] and s["worst"] is not s["best"] else "")
+            trs.append(f'<tr><td>{mlink(m)}</td><td class="num">{s["won"]}</td><td class="num">{s["lost"]}</td>'
+                       f'<td class="num">${s["spent"]}</td><td class="num">${s["over"]}</td>'
+                       f'<td class="num">{s["fpor"]:+.1f}</td><td class="num"><b>{f"<span class=tl-via>under ${MIN}</span>" if ef is None else f"{ef:+.2f}"}</b></td>'
+                       f'<td class="num">{"" if left.get(m) is None else "$" + str(left[m])}</td>'
+                       f'<td class="tl-small">{best}</td><td class="tl-small">{worst}</td></tr>')
+        big = sorted([c for c in claims if (c["over"] or 0) > 0], key=lambda c: -c["over"])[:5]
+        over = "".join(f'<li><b>{e(c["mgr"])}</b> paid ${c["bid"]} for {e(c["player"])} against a next-best ${c["bid"] - c["over"]}: ${c["over"]} over</li>' for c in big)
+        nlost = sum(len(c["losers"]) for c in claims)
+        body = (f'<p class="kb-hint" style="margin-top:0">{y}: {len(claims)} claims won, {nlost} losing offers behind them'
+                f'{", through week " + str(meta["completed"]) if y == L.current else ""}.</p>'
+                '<h2 class="tl-h2">Spending efficiency by manager</h2>'
+                '<p class="kb-hint" style="margin-top:0">FPOR per $ is the headline: fantasy points over replacement the claimed players produced for that manager, divided by FAAB spent. '
+                'Overpay is the gap between a winning bid and the next-best real offer (claims nobody else bid on count as $0 over). Managers under $10 spent are not ranked. Sorted most efficient first.</p>'
+                '<table class="tl-summary fl-summary"><thead><tr><th>Manager</th><th class="num">Won</th><th class="num">Outbid</th><th class="num">Spent</th>'
+                '<th class="num">Overpay</th><th class="num">FPOR bought</th><th class="num">FPOR / $</th><th class="num">FAAB left</th><th>Best buy</th><th>Worst buy</th></tr></thead>'
+                f'<tbody>{"".join(trs)}</tbody></table>' +
+                (f"<h2 class='tl-h2'>Biggest overpays</h2><ul class='fl-list'>{over}</ul>" if over else ""))
+        panes += pane(y, L.current, body)
+        # WG-only chart for the season, shown under the I Yearn content
         pts = [(s["spent"], round(s["fpor"], 1), m,
                 f'<b>{e(m)}</b><br>${s["spent"]} on {s["won"]} claims<br>{_sgn(s["fpor"])} FPOR' + (f'<br>{eff(s):+.2f} per $' if eff(s) is not None else ""),
                 V.ACCENT if s["fpor"] >= 0 else V.NEG) for m, s in S.items() if s["won"]]
-        chart = V.scatter_xy(pts, f"{y}: FAAB spent vs. FPOR bought", "Up and to the left is efficient: lots of value for little money.",
-                             "FAAB spent ($)", "FPOR from claimed players", xfmt="${:g}")
-        big = sorted([c for c in claims if (c["over"] or 0) > 0], key=lambda c: -c["over"])[:5]
-        over = "".join(f'<li><b>{e(c["mgr"])}</b> paid ${c["bid"]} for {e(c["player"])} against a next-best ${c["bid"] - c["over"]}: ${c["over"]} over</li>' for c in big)
-        nc = sum(c["contested"] for c in claims)
-        kp = (f'<div class="kpis"><div class="kpi"><div class="k">Claims won</div><div class="v">{len(claims)}</div></div>'
-              f'<div class="kpi"><div class="k">Contested</div><div class="v">{nc}</div></div>'
-              f'<div class="kpi"><div class="k">FAAB spent</div><div class="v">${sum(c["bid"] for c in claims)}</div></div>'
-              f'<div class="kpi"><div class="k">Biggest bid</div><div class="v kpi-text">${max(c["bid"] for c in claims)} '
-              f'<span class="tl-via">{e(max(claims, key=lambda c: c["bid"])["player"])}</span></div></div></div>')
-        body = kp + chart + '<h2 class="tl-h2">Spending efficiency by manager</h2>' + \
-            _tbl(hd, trs, num=(1, 2, 3, 4, 5, 6) + ((7,) if left else ()), cls="roster fl-summary") + \
-            (f"<h2 class='tl-h2'>Biggest overpays</h2><ul class='fl-list'>{over}</ul>" if over else "")
-        panes += pane(y, L.current, body)
+        cpanes += pane(y, L.current, V.scatter_xy(pts, f"{y}: FAAB spent vs. FPOR bought", "Up and to the left is efficient: lots of value for little money.",
+                                                  "FAAB spent ($)", "FPOR from claimed players", xfmt="${:g}"))
         data[y] = {"wk": meta["completed"], "c": [[c["date"], c["mgr"], c["player"], c["pos"], c["bid"],
-                                                    [[m, b, {"Lower Offer": "", "Lower waiver priority": "p"}.get(r, "i")] for m, b, r in c["losers"]],
+                                                    [[m, b, (r or "lower offer").lower()] for m, b, r in c["losers"]],
                                                     c["over"], c["games"], round(c["pts"], 1), round(c["fpor"], 1)] for c in claims]}
-        hist.append((y, sum(c["bid"] for c in claims), len(claims), nc))
+        hist.append((y, sum(c["bid"] for c in claims), len(claims), sum(c["contested"] for c in claims)))
     trend = V.stacked_vbars([str(h[0])[2:] for h in hist],
                             [("Contested claims", V.BLUES[1], [h[3] for h in hist]), ("Uncontested", V.BLUES[3], [h[2] - h[3] for h in hist])],
                             "Waiver claims won per season", "Contested = at least one other team bid on the same player.", W=460)
     spend = V.vbars([str(h[0])[2:] for h in hist], [h[1] for h in hist], "FAAB spent per season", "All 12 teams, winning bids only.", fmt="${:,.0f}", W=460, height=230)
     mgr_opts = "".join(f'<option value="{e(m)}">{e(m)}</option>' for m in L.managers)
-    body = (f'<div class="vb-filters">{season_select("faab", list(data), L.current)}</div>' + panes +
+    body = (f'<div class="tl-app"><div class="vb-filters">{season_select("faab", list(data), L.current)}</div>' + panes +
             '<h2 class="tl-h2">Every claim</h2><div class="vb-filters">'
             f'<label class="vb-filter">Manager <select id="fl-mgr"><option value="">All managers</option>{mgr_opts}</select></label>'
             '<div class="vb-filter vb-chips" id="fl-type"><button type="button" class="vb-chip is-on" data-type="contested">Contested</button>'
             '<button type="button" class="vb-chip is-on" data-type="uncontested">Uncontested</button></div></div>'
-            '<div class="table-scroll"><table class="tl-table fl-table"><thead><tr><th>Processed</th><th>Winner</th><th>Player</th><th class="num">Bid</th>'
-            '<th>Other offers</th><th class="num">Over</th><th>Since pickup</th><th class="num">Pts / $</th></tr></thead><tbody id="fl-body"></tbody></table></div>'
-            '<h2>Across seasons</h2><div class="viz-grid2">' + trend + spend + '</div>'
-            '<p class="note">In the efficiency table, Won is claims won, Lost is claims where another team outbid you, and Left is FAAB still in the bank. Under each name: &#9650; best buy and &#9660; worst buy (FPOR, then what was paid); tap for the full names. FPOR per $ ("Per $") is fantasy points over replacement the claimed players produced for that manager, divided by FAAB spent; '
-            'managers under $10 are not ranked. Overpay is the gap between a winning bid and the next-best real offer (claims nobody else bid on count as $0 over). '
-            '"Since pickup" counts only the run of weeks the player stayed on the claiming team. Winning bids come from the Yahoo API; losing offers from Yahoo\'s '
-            'FAB Offers page for every season, read Nov 9, 2026. Free-agent adds (no waiver period) are not claims; see the transaction log.</p>'
+            '<table class="tl-table fl-table"><thead><tr><th>Processed</th><th>Winner</th><th>Player</th><th class="num">Bid</th>'
+            '<th>Other offers</th><th class="num">Over</th><th>Since pickup</th><th class="num">Pts / $</th></tr></thead><tbody id="fl-body"></tbody></table>'
+            '<p class="kb-hint">"Since pickup" counts only weeks the player was on the claiming manager\'s roster. A $0 bid won on waiver priority shows as free. '
+            'Free-agent adds (no waiver period) are not claims and are not here; see the transaction log. Winning bids come from the Yahoo API; losing offers from '
+            'Yahoo\'s FAB Offers page for every season, last read Nov 9, 2026.</p>'
+            '<h2>Charts</h2>' + cpanes + '<div class="viz-grid2">' + trend + spend + '</div></div>'
             f"<script>window.WG_FL = {_j(data)};</script>")
     return body
 
@@ -211,7 +205,8 @@ def faab_ledger(L, mlink, offers_doc):
 # --------------------------------------------------------------- transaction log
 
 def transaction_log(L, mlink):
-    data, panes, hist = {}, "", []
+    """Same markup as I Yearn's render_transaction_log, one pane per season."""
+    data, panes, cpanes, hist = {}, "", "", []
     pid_ix = {}
     pnames = []
 
@@ -234,6 +229,8 @@ def transaction_log(L, mlink):
                                 FROM transaction_picks tk JOIN transactions t USING(transaction_id) WHERE t.season=?""", (y,)):
             picks[r[0]].append(tuple(r)[1:])
         S = defaultdict(lambda: {"adds": 0, "drops": 0, "trades": 0, "bids": 0, "faab": 0})
+        for t in L.teams_in(y):
+            S[t["manager"]]
         rows = []
         for tid, ts, et, faab in txns:
             Lg = legs.get(tid, [])
@@ -261,26 +258,39 @@ def transaction_log(L, mlink):
             kind = "ad" if ins and outs else ("a" if ins else "d")
             rows.append([d, kind, m, ins, outs, int(faab) if faab else 0, "w" if src == "waivers" else ("f" if src == "freeagents" else "")])
         data[y] = rows
-        order = sorted(S.items(), key=lambda kv: -(kv[1]["adds"] + kv[1]["trades"]))
+        left = {}
+        if y == L.current:
+            for t in L.teams_in(y):
+                fb = (L.stats.get(t["team_season_id"]) or {}).get("faab_balance")
+                if fb is not None:
+                    left[t["manager"]] = fb
+        order = sorted(S.items(), key=lambda kv: (-(kv[1]["adds"] + kv[1]["drops"] + kv[1]["trades"]), kv[0]))
+        trs = "".join(f'<tr><td>{mlink(m)}</td><td class="num">{s["adds"]}</td><td class="num">{s["drops"]}</td>'
+                      f'<td class="num">{s["trades"]}</td><td class="num">{s["bids"]}</td><td class="num">${s["faab"]}</td>'
+                      f'<td class="num">{"" if left.get(m) is None else "$" + str(left[m])}</td></tr>' for m, s in order)
+        panes += pane(y, L.current,
+                      f'<p class="kb-hint" style="margin-top:0">{y}: every move on Yahoo, newest first: {len(rows)} waiver claims, free-agent adds, drops and trades.</p>'
+                      '<h2 class="tl-h2">By manager</h2><table class="tl-summary"><thead><tr><th>Manager</th><th class="num">Adds</th><th class="num">Drops</th>'
+                      '<th class="num">Trades</th><th class="num">Bids won</th><th class="num">FAAB spent</th><th class="num">FAAB left</th></tr></thead>'
+                      f'<tbody>{trs}</tbody></table>')
         segs = [("Adds", V.BLUES[1]), ("Trades", "#e1b523")]
-        chart = V.stacked_hbars([(m, [s["adds"], s["trades"]], f'<b>{e(m)}</b><br>{s["adds"]} adds, {s["drops"]} drops<br>{s["trades"]} trades<br>{s["bids"]} winning bids, ${s["faab"]}')
-                                 for m, s in order], segs, f"{y}: moves by manager", "Adds (including add/drops) and trades. Hover for drops and FAAB.")
-        trs = [[mlink(m), str(s["adds"]), str(s["drops"]), str(s["trades"]), str(s["bids"]), f'${s["faab"]}'] for m, s in order]
-        panes += pane(y, L.current, chart + _tbl(["Manager", "Adds", "Drops", "Trades", "Bids won", "FAAB spent"], trs, num=(1, 2, 3, 4, 5)))
+        cpanes += pane(y, L.current, V.stacked_hbars(
+            [(m, [s["adds"], s["trades"]], f'<b>{e(m)}</b><br>{s["adds"]} adds, {s["drops"]} drops<br>{s["trades"]} trades<br>{s["bids"]} winning bids, ${s["faab"]}')
+             for m, s in order], segs, f"{y}: moves by manager", "Adds (including add/drops) and trades. Hover for drops and FAAB."))
         hist.append((y, sum(s["adds"] for s in S.values()), sum(1 for r in rows if r[1] == "t")))
     trend = V.stacked_vbars([str(h[0])[2:] for h in hist], [("Adds", V.BLUES[1], [h[1] for h in hist]), ("Trades", "#e1b523", [h[2] for h in hist])],
                             "League moves per season", f"{L.current} is in progress.")
     mgr_opts = "".join(f'<option value="{e(m)}">{e(m)}</option>' for m in L.managers)
-    body = (f'<div class="vb-filters">{season_select("txlog", list(data), L.current)}</div>' + panes +
+    body = (f'<div class="tl-app"><div class="vb-filters">{season_select("txlog", list(data), L.current)}</div>' + panes +
             '<h2 class="tl-h2">All moves</h2><div class="vb-filters">'
             f'<label class="vb-filter">Manager <select id="tl-mgr"><option value="">All managers</option>{mgr_opts}</select></label>'
             '<div class="vb-filter vb-chips" id="tl-type"><button type="button" class="vb-chip vb-chip-all is-on" data-all="1">All</button>'
-            '<button type="button" class="vb-chip is-on" data-type="a">Adds</button><button type="button" class="vb-chip is-on" data-type="ad">Add / drop</button>'
-            '<button type="button" class="vb-chip is-on" data-type="d">Drops</button><button type="button" class="vb-chip is-on" data-type="t">Trades</button></div></div>'
-            '<div class="table-scroll"><table class="tl-table"><thead><tr><th>Date</th><th>Type</th><th>Manager</th><th>Detail</th><th class="num">Bid</th></tr></thead>'
-            '<tbody id="tl-body"></tbody></table></div><p class="tl-count note" id="tl-count"></p>'
-            "<h2>Across seasons</h2>" + trend +
-            '<p class="note">Every successful move on Yahoo, newest first. Off-season trades never entered in Yahoo are not here.</p>'
+            '<button type="button" class="vb-chip is-on" data-type="add">Adds</button><button type="button" class="vb-chip is-on" data-type="add/drop">Add / drop</button>'
+            '<button type="button" class="vb-chip is-on" data-type="drop">Drops</button><button type="button" class="vb-chip is-on" data-type="trade">Trades</button></div></div>'
+            '<table class="tl-table"><thead><tr><th>Date</th><th>Type</th><th>Manager</th><th>Detail</th><th class="num">Bid</th></tr></thead>'
+            '<tbody id="tl-body"></tbody></table>'
+            '<p class="kb-hint">Source: Yahoo Fantasy Sports API, pulled on every refresh. Off-season trades never entered in Yahoo are not here.</p>'
+            "<h2>Charts</h2>" + cpanes + trend + '</div>'
             f"<script>window.WG_TL = {_j(data)}; window.WG_P = {_j(pnames)};</script>")
     return body
 
@@ -329,35 +339,58 @@ DYN_CSS = """
 .vb-repl-k { color: var(--gray-500); font-size: 12px; margin-right: 4px; }
 .vb-repl-i { background: var(--gray-100); border-radius: 999px; padding: 3px 10px; font-variant-numeric: tabular-nums; }
 .vb-repl-i b { color: var(--blue-800); margin-right: 3px; }
-.tl-h2 { font-size: 15px; font-weight: 600; margin: 18px 0 8px; color: var(--gray-700); }
-.tl-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.tl-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--gray-500); font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--gray-200); }
-.tl-table td { padding: 7px 8px; border-bottom: 1px solid var(--gray-100); vertical-align: top; }
-.tl-table .num { text-align: right; font-variant-numeric: tabular-nums; }
-.tl-date { white-space: nowrap; color: var(--gray-600); font-variant-numeric: tabular-nums; }
-.tl-mgr { white-space: nowrap; font-weight: 600; }
-.tl-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
-.tl-add { background: #e6efff; color: var(--blue-800); }
-.tl-drop { background: #fdecea; color: #b42318; }
-.tl-adddrop { background: var(--gray-100); color: var(--gray-700); }
-.tl-trade { background: rgba(225,181,35,.22); color: #7a5d05; }
-.tl-in { color: var(--blue-800); font-weight: 600; }
-.tl-out { color: #b42318; }
-.tl-via, .tl-small { color: var(--gray-500); font-size: 12px; }
-.tl-side { line-height: 1.4; }
-.fl-summary .fl-buy { display: block; font-size: 10.5px; color: var(--gray-500); line-height: 1.35; margin-top: 2px; white-space: normal; }
-.fl-summary .fl-b { white-space: nowrap; margin-right: 8px; }
-@media (max-width: 720px) { .fl-summary .fl-b { display: block; margin-right: 0; } .fl-summary td:first-child { min-width: 0; } }
-.fl-summary td:first-child { min-width: 128px; }
-.fl-summary td, .fl-summary th { padding-top: 8px !important; padding-bottom: 8px !important; }
-.fl-loser { font-size: 12.5px; line-height: 1.4; white-space: nowrap; }
-.fl-list { font-size: 13.5px; line-height: 1.6; margin: 0 0 6px 18px; padding: 0; }
-.tl-more { font: inherit; font-size: 13px; margin: 10px 0; padding: 6px 14px; border-radius: 8px; border: 1px solid #d8d8dc; background: #fff; cursor: pointer; color: var(--blue-800); font-weight: 600; }
 @media (max-width: 720px) {
   .vb-row { grid-template-columns: 1fr; gap: 4px; }
   .vb-card { width: calc(50% - 3px); }
-  .tl-table:not(.fl-table) th:nth-child(2), .tl-table:not(.fl-table) td:nth-child(2) { display: none; }
-  .fl-loser { white-space: normal; }
+}
+
+.tl-small { color: var(--gray-500); font-size: 12px; }
+.tl-summary a { color: inherit; text-decoration: none; }
+/* Copied verbatim from I Yearn dashboard.html (2026-11-11): transaction log + FAAB ledger */
+.kb-hint { color:#606C71; font-size:12px; margin:10px 0 0; }
+.vb-app, .tl-app { max-width: 1240px; }
+.vb-filters { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: center; margin: 4px 0 14px; }
+.vb-filter { font-size: 12.5px; color: var(--gray-600); display: flex; align-items: center; gap: 8px; }
+.vb-filter select { font: inherit; font-size: 13px; padding: 5px 8px; border: 1px solid var(--gray-200); border-radius: 6px; background: #fff; color: #000; }
+.vb-chips { gap: 6px; }
+.vb-chip { font: inherit; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--gray-200); background: #fff; color: var(--gray-500); cursor: pointer; }
+.vb-chip.is-on { background: var(--blue-800); border-color: var(--blue-800); color: #fff; }
+.vb-chip-all { margin-right: 4px; }
+.vb-chip-all.is-on { background: var(--gray-700); border-color: var(--gray-700); }
+.tl-h2 { font-size: 15px; font-weight: 600; margin: 18px 0 8px; color: var(--gray-700); }
+.tl-summary, .tl-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tl-summary th, .tl-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--gray-500); font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--gray-200); }
+.tl-summary td, .tl-table td { padding: 7px 8px; border-bottom: 1px solid var(--gray-100); vertical-align: top; }
+.tl-summary .num, .tl-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.tl-date { white-space: nowrap; color: var(--gray-600); font-variant-numeric: tabular-nums; }
+.tl-mgr { white-space: nowrap; font-weight: 600; }
+.tl-faab { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tl-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.tl-add { background: rgba(28,122,74,.14); color: #1c7a4a; }
+.tl-drop { background: rgba(180,35,24,.12); color: #b42318; }
+.tl-adddrop { background: rgba(2,36,121,.10); color: var(--blue-800); }
+.tl-trade { background: rgba(225,181,35,.22); color: #7a5d05; }
+.tl-in { color: #1c7a4a; font-weight: 600; }
+.tl-out { color: #b42318; }
+.tl-via { color: var(--gray-500); font-size: 12px; }
+.tl-side { line-height: 1.4; }
+.tl-row.is-hidden { display: none; }
+.fl-summary td.tl-small { font-size: 12px; color: var(--gray-600); }
+.fl-loser { font-size: 12.5px; line-height: 1.4; white-space: nowrap; }
+.fl-list { font-size: 13.5px; line-height: 1.6; margin: 0 0 6px 18px; padding: 0; }
+@media (max-width: 720px) {
+  .tl-table:not(.fl-table) th:nth-child(2), .tl-table:not(.fl-table) td:nth-child(2) { display: none;}
+  .tl-summary { font-size: 12px;}
+}
+@media (max-width: 720px) {
+  .fl-summary th:nth-child(n+9), .fl-summary td:nth-child(n+9) { display: none;}
+  .fl-table th:nth-child(1), .fl-table td:nth-child(1),
+  .fl-table th:nth-child(6), .fl-table td:nth-child(6),
+  .fl-table th:nth-child(7), .fl-table td:nth-child(7),
+  .fl-table th:nth-child(8), .fl-table td:nth-child(8) { display: none;}
+  .fl-table { font-size: 12.5px;}
+  .fl-loser { white-space: normal;}
+  .fl-loser .tl-via { display: none;}
 }
 """
 
@@ -462,54 +495,60 @@ DYN_JS = r"""
     vbChips(document.getElementById('vb-pos'), draw);
   }
 
-  // ---------------- FAAB ledger: every claim
+  // ---------------- FAAB ledger: every claim (I Yearn markup)
   if (window.WG_FL) {
     const body = document.getElementById('fl-body'), sel = document.getElementById('fl-mgr');
     const chips = Array.from(document.querySelectorAll('#fl-type .vb-chip'));
-    const R = {'': 'lower offer', p: 'lower priority', i: 'invalid claim'};
     function draw() {
       const D = window.WG_FL[cur('faab')]; if (!D) return;
       const mgr = sel.value, on = new Set(chips.filter(c => c.classList.contains('is-on')).map(c => c.dataset.type));
-      body.innerHTML = D.c.filter(c => on.has(c[5].length ? 'contested' : 'uncontested') && (!mgr || c[1] === mgr || c[5].some(l => l[0] === mgr))).map(c => {
-        const los = c[5].length ? c[5].slice().sort((a, b) => b[1] - a[1]).map(l => `<div class="fl-loser">${esc(l[0])} $${l[1]} <span class="tl-via">${R[l[2]]}</span></div>`).join('') : '<span class="tl-via">uncontested</span>';
-        const prod = c[7] ? `${sg(c[9])} FPOR in ${c[7]} g` : '<span class="tl-via">no games</span>';
-        const ppd = c[7] ? (c[4] ? (c[8] / c[4]).toFixed(1) : 'free') : '';
-        return `<tr><td class="tl-date">${fd(c[0])}</td><td class="tl-mgr">${esc(c[1])}</td><td><b>${esc(c[2])}</b> <span class="tl-via">${c[3]}</span></td>` +
-          `<td class="num"><b>$${c[4]}</b></td><td>${los}</td><td class="num">${c[6] == null ? '' : '$' + c[6]}</td><td>${prod}</td><td class="num">${ppd}</td></tr>`; }).join('') ||
-        '<tr><td colspan="8" class="note">No claims match.</td></tr>';
+      body.innerHTML = D.c.map(c => {
+        const t = c[5].length ? 'contested' : 'uncontested';
+        const hid = !(on.has(t) && (!mgr || c[1] === mgr));
+        const los = c[5].length ? c[5].slice().sort((a, b) => b[1] - a[1]).map(l => `<div class="fl-loser">${esc(l[0])} $${l[1]} <span class="tl-via">${esc(l[2])}</span></div>`).join('') : '<span class="tl-via">uncontested</span>';
+        const over = c[6] == null ? '' : (c[6] > 0 ? '$' + c[6] : '$0');
+        const prod = c[7] ? `${sg(c[9])} FPOR in ${c[7]} g` : '<span class="tl-via">no games yet</span>';
+        const ppd = c[7] ? (c[4] ? (c[8] / c[4]).toFixed(1) : (c[8] ? 'free' : '')) : '';
+        return `<tr class="tl-row${hid ? ' is-hidden' : ''}" data-mgr="${esc(c[1])}" data-type="${t}"><td class="tl-date">${c[0]}</td><td class="tl-mgr">${esc(c[1])}</td>` +
+          `<td><b>${esc(c[2])}</b> <span class="tl-via">${c[3]}</span></td><td class="num"><b>$${c[4]}</b></td><td>${los}</td><td class="num">${over}</td><td>${prod}</td><td class="num">${ppd}</td></tr>`; }).join('');
     }
     RENDER['faab'] = draw;
     sel.addEventListener('change', draw);
     vbChips(document.getElementById('fl-type'), draw);
   }
 
-  // ---------------- transaction log: all moves
+  // ---------------- transaction log: all moves (I Yearn markup, no row limit)
   if (window.WG_TL) {
     const body = document.getElementById('tl-body'), sel = document.getElementById('tl-mgr');
     const chips = Array.from(document.querySelectorAll('#tl-type .vb-chip:not(.vb-chip-all)'));
     const P = window.WG_P, names = ix => ix.map(i => esc(P[i])).join(', ');
-    const B = {a: ['tl-add', 'Add'], d: ['tl-drop', 'Drop'], ad: ['tl-adddrop', 'Add / drop'], t: ['tl-trade', 'Trade']};
-    let limit = 200;
-    function draw(reset) {
-      const D = window.WG_TL[cur('txlog')]; if (!D) return;
-      if (reset === true) limit = 200;
-      const mgr = sel.value, on = new Set(chips.filter(c => c.classList.contains('is-on')).map(c => c.dataset.type));
-      const rows = D.filter(r => on.has(r[1]) && (!mgr || (r[1] === 't' ? r[2].some(s => s[0] === mgr) : r[2] === mgr)));
-      body.innerHTML = rows.slice(0, limit).map(r => {
-        if (r[1] === 't') return `<tr><td class="tl-date">${fd(r[0])}</td><td><span class="tl-badge tl-trade">Trade</span></td><td class="tl-mgr">${r[2].map(s => esc(s[0])).join(' &harr; ')}</td>` +
-          `<td>${r[2].map(s => `<div class="tl-side"><b>${esc(s[0])}</b> gets ${[names(s[1]), ...s[2].map(k => 'Rd ' + k + ' pick')].filter(Boolean).join(', ') || 'nothing'}</div>`).join('')}</td><td></td></tr>`;
-        const det = [];
+    const T = {a: 'add', d: 'drop', ad: 'add/drop', t: 'trade'};
+    const B = {add: ['tl-add', 'Add'], drop: ['tl-drop', 'Drop'], 'add/drop': ['tl-adddrop', 'Add / drop']};
+    let season = null;
+    function build() {
+      const D = window.WG_TL[season]; if (!D) return;
+      body.innerHTML = D.map(r => {
+        if (r[1] === 't') return `<tr class="tl-row" data-type="trade" data-mgr="${r[2].map(s => esc(s[0])).join('|')}"><td class="tl-date">${r[0]}</td>` +
+          `<td><span class="tl-badge tl-trade">Trade</span></td><td class="tl-mgr">${r[2].map(s => esc(s[0])).join(' &harr; ')}</td>` +
+          `<td class="tl-detail">${r[2].map(s => `<div class="tl-side"><b>${esc(s[0])}</b> gets ${[names(s[1]), ...s[2].map(k => 'R' + k + ' pick')].filter(Boolean).join(', ') || 'nothing'}</div>`).join('')}</td><td class="tl-faab"></td></tr>`;
+        const k = T[r[1]], det = [];
         if (r[3].length) det.push(`<span class="tl-in">+ ${names(r[3])}</span><span class="tl-via">${r[6] === 'w' ? ' via waivers' : r[6] === 'f' ? ' free agent' : ''}</span>`);
         if (r[4].length) det.push(`<span class="tl-out">&minus; ${names(r[4])}</span>`);
-        return `<tr><td class="tl-date">${fd(r[0])}</td><td><span class="tl-badge ${B[r[1]][0]}">${B[r[1]][1]}</span></td><td class="tl-mgr">${esc(r[2])}</td><td>${det.join('<br>')}</td><td class="num">${r[5] ? '$' + r[5] : ''}</td></tr>`;
-      }).join('') || '<tr><td colspan="5" class="note">No moves match.</td></tr>';
-      const c = document.getElementById('tl-count');
-      c.innerHTML = rows.length > limit ? `Showing ${limit} of ${rows.length} moves. <button type="button" class="tl-more">Show all</button>` : `${rows.length} moves.`;
-      const b = c.querySelector('.tl-more'); if (b) b.addEventListener('click', () => { limit = 1e9; draw(); });
+        return `<tr class="tl-row" data-type="${k}" data-mgr="${esc(r[2])}"><td class="tl-date">${r[0]}</td><td><span class="tl-badge ${B[k][0]}">${B[k][1]}</span></td>` +
+          `<td class="tl-mgr">${esc(r[2])}</td><td class="tl-detail">${det.join('<br>')}</td><td class="tl-faab">${r[5] ? '$' + r[5] : ''}</td></tr>`;
+      }).join('');
+      apply();
     }
-    RENDER['txlog'] = () => draw(true);
-    sel.addEventListener('change', () => draw(true));
-    vbChips(document.getElementById('tl-type'), () => draw(true));
+    function apply() {
+      const mgr = sel.value, on = new Set(chips.filter(c => c.classList.contains('is-on')).map(c => c.dataset.type));
+      body.querySelectorAll('.tl-row').forEach(r => {
+        const mgrOk = !mgr || r.dataset.mgr.split('|').includes(mgr);
+        r.classList.toggle('is-hidden', !(mgrOk && on.has(r.dataset.type)));
+      });
+    }
+    RENDER['txlog'] = s => { if (s !== season) { season = s; build(); } };
+    sel.addEventListener('change', apply);
+    vbChips(document.getElementById('tl-type'), apply);
   }
 })();
 """

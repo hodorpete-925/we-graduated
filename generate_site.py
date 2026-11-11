@@ -90,7 +90,6 @@ EXTRA_CSS = """
   .content table.roster th { padding: 9px 7px; letter-spacing: .06em; font-size: 10px; }
   .content table.roster td { padding: 9px 7px; }
   .content table.roster td.num, .content table.roster th.num { white-space: nowrap; }
-  .content table.tl-table td, .content table.tl-table th { padding: 7px 6px; }
 }
 .brand-logo { width: 56px; height: 56px; border-radius: 10px; background: #fff; padding: 4px; margin-bottom: 10px; display: block; }
 .oq-block { border: 1px solid #f0d78c; background: #fffaeb; border-radius: 10px; padding: 18px 22px; margin: 8px 0 28px; }
