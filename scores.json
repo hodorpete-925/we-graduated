@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 12 9:49 PM EST",
+ "as_of": "Nov 12 10:48 PM EST",
  "season": 2026,
  "week": 10,
  "status": "in_progress",
@@ -13,16 +13,16 @@
     "pts": 0.0,
     "rec": "6-3-0",
     "rank": 3,
-    "win_prob": 0.31
+    "win_prob": 0.28
    },
    "b": {
     "tid": 12,
     "team": "The Process",
     "proj": 108.78,
-    "pts": 10.78,
+    "pts": 22.22,
     "rec": "4-5-0",
     "rank": 7,
-    "win_prob": 0.69
+    "win_prob": 0.72
    },
    "status": "in_progress"
   },
@@ -52,19 +52,19 @@
     "tid": 3,
     "team": "American Red Cross",
     "proj": 116.65,
-    "pts": 3.9,
+    "pts": 16.7,
     "rec": "8-1-0",
     "rank": 1,
-    "win_prob": 0.76
+    "win_prob": 0.83
    },
    "b": {
     "tid": 9,
     "team": "Ryan-0 Hydrangea-1",
     "proj": 93.81,
-    "pts": 6.0,
+    "pts": 7.0,
     "rec": "5-4-0",
     "rank": 5,
-    "win_prob": 0.24
+    "win_prob": 0.17
    },
    "status": "in_progress"
   },
@@ -73,10 +73,10 @@
     "tid": 4,
     "team": "Foster!AussieForTD",
     "proj": 99.83,
-    "pts": 3.4,
+    "pts": 4.2,
     "rec": "4-5-0",
     "rank": 9,
-    "win_prob": 0.35
+    "win_prob": 0.33
    },
    "b": {
     "tid": 5,
@@ -85,7 +85,7 @@
     "pts": 0.0,
     "rec": "4-5-0",
     "rank": 6,
-    "win_prob": 0.65
+    "win_prob": 0.67
    },
    "status": "in_progress"
   },
@@ -97,16 +97,16 @@
     "pts": 0.0,
     "rec": "6-3-0",
     "rank": 4,
-    "win_prob": 0.24
+    "win_prob": 0.26
    },
    "b": {
     "tid": 8,
     "team": "Quinn647",
     "proj": 110.6,
-    "pts": 0.8,
+    "pts": 2.4,
     "rec": "6-3-0",
     "rank": 2,
-    "win_prob": 0.76
+    "win_prob": 0.74
    },
    "status": "in_progress"
   },
@@ -115,19 +115,19 @@
     "tid": 10,
     "team": "Sharty Waffles",
     "proj": 96.52,
-    "pts": 13.2,
+    "pts": 22.6,
     "rec": "3-6-0",
     "rank": 10,
-    "win_prob": 0.83
+    "win_prob": 0.81
    },
    "b": {
     "tid": 11,
     "team": "The James Connor Experience",
     "proj": 76.48,
-    "pts": 0.0,
+    "pts": 10.2,
     "rec": "2-7-0",
     "rank": 12,
-    "win_prob": 0.17
+    "win_prob": 0.19
    },
    "status": "in_progress"
   }
