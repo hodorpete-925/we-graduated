@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 13 12:48 AM EST",
+ "as_of": "Nov 13 1:48 AM EST",
  "season": 2026,
  "week": 10,
  "status": "in_progress",
@@ -9,7 +9,7 @@
    "a": {
     "tid": 1,
     "team": "Buffalo Bills+",
-    "proj": 90.42,
+    "proj": 90.4,
     "pts": 0.0,
     "rec": "6-3-0",
     "rank": 3,
@@ -18,7 +18,7 @@
    "b": {
     "tid": 12,
     "team": "The Process",
-    "proj": 108.74,
+    "proj": 108.73,
     "pts": 26.76,
     "rec": "4-5-0",
     "rank": 7,
@@ -30,7 +30,7 @@
    "a": {
     "tid": 2,
     "team": "10 Years Later",
-    "proj": 92.09,
+    "proj": 92.1,
     "pts": 0.0,
     "rec": "4-5-0",
     "rank": 8,
@@ -39,7 +39,7 @@
    "b": {
     "tid": 7,
     "team": "No means no",
-    "proj": 98.2,
+    "proj": 98.21,
     "pts": 0.0,
     "rec": "2-7-0",
     "rank": 11,
@@ -81,7 +81,7 @@
    "b": {
     "tid": 5,
     "team": "I Wish Joel Didn't Confirm",
-    "proj": 115.63,
+    "proj": 115.64,
     "pts": 0.0,
     "rec": "4-5-0",
     "rank": 6,
