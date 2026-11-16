@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 15 6:10 PM EST",
+ "as_of": "Nov 15 7:10 PM EST",
  "season": 2026,
  "week": 10,
  "status": "in_progress",
@@ -19,7 +19,7 @@
     "tid": 12,
     "team": "The Process",
     "proj": 110.0,
-    "pts": 121.46,
+    "pts": 135.76,
     "rec": "4-5-0",
     "rank": 7,
     "win_prob": 0.99
@@ -40,7 +40,7 @@
     "tid": 7,
     "team": "No means no",
     "proj": 98.72,
-    "pts": 92.92,
+    "pts": 96.42,
     "rec": "2-7-0",
     "rank": 11,
     "win_prob": 0.99
@@ -52,19 +52,19 @@
     "tid": 3,
     "team": "American Red Cross",
     "proj": 116.88,
-    "pts": 124.24,
+    "pts": 131.04,
     "rec": "8-1-0",
     "rank": 1,
-    "win_prob": 0.94
+    "win_prob": 0.93
    },
    "b": {
     "tid": 9,
     "team": "Ryan-0 Hydrangea-1",
     "proj": 95.32,
-    "pts": 99.54,
+    "pts": 121.74,
     "rec": "5-4-0",
     "rank": 5,
-    "win_prob": 0.06
+    "win_prob": 0.07
    },
    "status": "in_progress"
   },
@@ -82,7 +82,7 @@
     "tid": 5,
     "team": "I Wish Joel Didn't Confirm",
     "proj": 99.04,
-    "pts": 66.16,
+    "pts": 87.9,
     "rec": "4-5-0",
     "rank": 6,
     "win_prob": 0.01
@@ -94,19 +94,19 @@
     "tid": 6,
     "team": "Meet the Swifts",
     "proj": 85.43,
-    "pts": 70.18,
+    "pts": 76.82,
     "rec": "6-3-0",
     "rank": 4,
-    "win_prob": 0.27
+    "win_prob": 0.15
    },
    "b": {
     "tid": 8,
     "team": "Quinn647",
     "proj": 111.53,
-    "pts": 62.1,
+    "pts": 64.5,
     "rec": "6-3-0",
     "rank": 2,
-    "win_prob": 0.73
+    "win_prob": 0.85
    },
    "status": "in_progress"
   },
@@ -115,7 +115,7 @@
     "tid": 10,
     "team": "Sharty Waffles",
     "proj": 95.57,
-    "pts": 68.4,
+    "pts": 72.2,
     "rec": "3-6-0",
     "rank": 10,
     "win_prob": 0.99
@@ -124,7 +124,7 @@
     "tid": 11,
     "team": "The James Connor Experience",
     "proj": 76.98,
-    "pts": 49.08,
+    "pts": 54.28,
     "rec": "2-7-0",
     "rank": 12,
     "win_prob": 0.01
