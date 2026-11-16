@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 15 8:10 PM EST",
+ "as_of": "Nov 15 9:10 PM EST",
  "season": 2026,
  "week": 10,
  "status": "in_progress",
@@ -18,7 +18,7 @@
    "b": {
     "tid": 12,
     "team": "The Process",
-    "proj": 110.02,
+    "proj": 109.97,
     "pts": 150.56,
     "rec": "4-5-0",
     "rank": 7,
@@ -31,7 +31,7 @@
     "tid": 2,
     "team": "10 Years Later",
     "proj": 104.78,
-    "pts": 63.02,
+    "pts": 66.42,
     "rec": "4-5-0",
     "rank": 8,
     "win_prob": 0.01
@@ -40,7 +40,7 @@
     "tid": 7,
     "team": "No means no",
     "proj": 98.71,
-    "pts": 96.42,
+    "pts": 100.22,
     "rec": "2-7-0",
     "rank": 11,
     "win_prob": 0.99
@@ -51,11 +51,11 @@
    "a": {
     "tid": 3,
     "team": "American Red Cross",
-    "proj": 116.89,
-    "pts": 131.04,
+    "proj": 116.88,
+    "pts": 139.24,
     "rec": "8-1-0",
     "rank": 1,
-    "win_prob": 0.92
+    "win_prob": 0.98
    },
    "b": {
     "tid": 9,
@@ -64,7 +64,7 @@
     "pts": 125.34,
     "rec": "5-4-0",
     "rank": 5,
-    "win_prob": 0.08
+    "win_prob": 0.02
    },
    "status": "in_progress"
   },
@@ -76,7 +76,7 @@
     "pts": 113.22,
     "rec": "4-5-0",
     "rank": 9,
-    "win_prob": 0.98
+    "win_prob": 0.97
    },
    "b": {
     "tid": 5,
@@ -85,7 +85,7 @@
     "pts": 114.52,
     "rec": "4-5-0",
     "rank": 6,
-    "win_prob": 0.02
+    "win_prob": 0.03
    },
    "status": "in_progress"
   },
@@ -97,16 +97,16 @@
     "pts": 88.16,
     "rec": "6-3-0",
     "rank": 4,
-    "win_prob": 0.23
+    "win_prob": 0.41
    },
    "b": {
     "tid": 8,
     "team": "Quinn647",
     "proj": 111.4,
-    "pts": 64.5,
+    "pts": 67.5,
     "rec": "6-3-0",
     "rank": 2,
-    "win_prob": 0.77
+    "win_prob": 0.59
    },
    "status": "in_progress"
   },
@@ -114,8 +114,8 @@
    "a": {
     "tid": 10,
     "team": "Sharty Waffles",
-    "proj": 95.6,
-    "pts": 72.2,
+    "proj": 95.59,
+    "pts": 86.08,
     "rec": "3-6-0",
     "rank": 10,
     "win_prob": 0.99
@@ -123,7 +123,7 @@
    "b": {
     "tid": 11,
     "team": "The James Connor Experience",
-    "proj": 76.99,
+    "proj": 77.0,
     "pts": 55.28,
     "rec": "2-7-0",
     "rank": 12,
