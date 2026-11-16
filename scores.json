@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 15 11:10 PM EST",
+ "as_of": "Nov 16 12:10 AM EST",
  "season": 2026,
  "week": 10,
  "status": "in_progress",
@@ -34,7 +34,7 @@
     "pts": 70.42,
     "rec": "4-5-0",
     "rank": 8,
-    "win_prob": 0.01
+    "win_prob": null
    },
    "b": {
     "tid": 7,
@@ -43,7 +43,7 @@
     "pts": 116.72,
     "rec": "2-7-0",
     "rank": 11,
-    "win_prob": 0.99
+    "win_prob": 1.0
    },
    "status": "in_progress"
   },
@@ -55,7 +55,7 @@
     "pts": 152.14,
     "rec": "8-1-0",
     "rank": 1,
-    "win_prob": 0.99
+    "win_prob": 1.0
    },
    "b": {
     "tid": 9,
@@ -64,7 +64,7 @@
     "pts": 125.34,
     "rec": "5-4-0",
     "rank": 5,
-    "win_prob": 0.01
+    "win_prob": null
    },
    "status": "in_progress"
   },
@@ -97,7 +97,7 @@
     "pts": 88.16,
     "rec": "6-3-0",
     "rank": 4,
-    "win_prob": 0.44
+    "win_prob": 0.76
    },
    "b": {
     "tid": 8,
@@ -106,7 +106,7 @@
     "pts": 90.82,
     "rec": "6-3-0",
     "rank": 2,
-    "win_prob": 0.56
+    "win_prob": 0.24
    },
    "status": "in_progress"
   },
