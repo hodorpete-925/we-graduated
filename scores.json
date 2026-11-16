@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 15 10:10 PM EST",
+ "as_of": "Nov 15 11:10 PM EST",
  "season": 2026,
  "week": 10,
  "status": "in_progress",
@@ -31,7 +31,7 @@
     "tid": 2,
     "team": "10 Years Later",
     "proj": 104.78,
-    "pts": 68.42,
+    "pts": 70.42,
     "rec": "4-5-0",
     "rank": 8,
     "win_prob": 0.01
@@ -40,7 +40,7 @@
     "tid": 7,
     "team": "No means no",
     "proj": 98.71,
-    "pts": 107.52,
+    "pts": 116.72,
     "rec": "2-7-0",
     "rank": 11,
     "win_prob": 0.99
@@ -52,7 +52,7 @@
     "tid": 3,
     "team": "American Red Cross",
     "proj": 116.88,
-    "pts": 145.64,
+    "pts": 152.14,
     "rec": "8-1-0",
     "rank": 1,
     "win_prob": 0.99
@@ -73,10 +73,10 @@
     "tid": 4,
     "team": "Foster!AussieForTD",
     "proj": 101.25,
-    "pts": 117.72,
+    "pts": 118.72,
     "rec": "4-5-0",
     "rank": 9,
-    "win_prob": 0.99
+    "win_prob": 0.98
    },
    "b": {
     "tid": 5,
@@ -85,7 +85,7 @@
     "pts": 114.52,
     "rec": "4-5-0",
     "rank": 6,
-    "win_prob": 0.01
+    "win_prob": 0.02
    },
    "status": "in_progress"
   },
@@ -97,16 +97,16 @@
     "pts": 88.16,
     "rec": "6-3-0",
     "rank": 4,
-    "win_prob": 0.45
+    "win_prob": 0.44
    },
    "b": {
     "tid": 8,
     "team": "Quinn647",
     "proj": 111.4,
-    "pts": 75.3,
+    "pts": 90.82,
     "rec": "6-3-0",
     "rank": 2,
-    "win_prob": 0.55
+    "win_prob": 0.56
    },
    "status": "in_progress"
   },
@@ -115,7 +115,7 @@
     "tid": 10,
     "team": "Sharty Waffles",
     "proj": 95.59,
-    "pts": 103.08,
+    "pts": 113.36,
     "rec": "3-6-0",
     "rank": 10,
     "win_prob": 0.99
@@ -124,7 +124,7 @@
     "tid": 11,
     "team": "The James Connor Experience",
     "proj": 77.0,
-    "pts": 56.28,
+    "pts": 58.68,
     "rec": "2-7-0",
     "rank": 12,
     "win_prob": 0.01
