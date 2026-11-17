@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 16 8:10 PM EST",
+ "as_of": "Nov 16 9:10 PM EST",
  "season": 2026,
  "week": 10,
  "status": "in_progress",
@@ -18,8 +18,8 @@
    "b": {
     "tid": 12,
     "team": "The Process",
-    "proj": 109.83,
-    "pts": 150.56,
+    "proj": 109.82,
+    "pts": 152.26,
     "rec": "4-5-0",
     "rank": 7,
     "win_prob": 0.99
@@ -73,10 +73,10 @@
     "tid": 4,
     "team": "Foster!AussieForTD",
     "proj": 101.27,
-    "pts": 118.72,
+    "pts": 125.22,
     "rec": "4-5-0",
     "rank": 9,
-    "win_prob": 0.97
+    "win_prob": 0.96
    },
    "b": {
     "tid": 5,
@@ -85,7 +85,7 @@
     "pts": 114.52,
     "rec": "4-5-0",
     "rank": 6,
-    "win_prob": 0.03
+    "win_prob": 0.04
    },
    "status": "in_progress"
   },
@@ -94,10 +94,10 @@
     "tid": 6,
     "team": "Meet the Swifts",
     "proj": 85.54,
-    "pts": 88.16,
+    "pts": 88.76,
     "rec": "6-3-0",
     "rank": 4,
-    "win_prob": 0.76
+    "win_prob": 0.71
    },
    "b": {
     "tid": 8,
@@ -106,7 +106,7 @@
     "pts": 90.82,
     "rec": "6-3-0",
     "rank": 2,
-    "win_prob": 0.24
+    "win_prob": 0.29
    },
    "status": "in_progress"
   },
@@ -114,8 +114,8 @@
    "a": {
     "tid": 10,
     "team": "Sharty Waffles",
-    "proj": 95.6,
-    "pts": 113.36,
+    "proj": 95.61,
+    "pts": 119.76,
     "rec": "3-6-0",
     "rank": 10,
     "win_prob": 0.99
