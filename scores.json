@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 16 11:10 PM EST",
+ "as_of": "Nov 17 12:10 AM EST",
  "season": 2026,
  "week": 10,
  "status": "in_progress",
@@ -13,16 +13,16 @@
     "pts": 97.08,
     "rec": "6-3-0",
     "rank": 3,
-    "win_prob": 0.01
+    "win_prob": null
    },
    "b": {
     "tid": 12,
     "team": "The Process",
     "proj": 109.82,
-    "pts": 156.46,
+    "pts": 155.96,
     "rec": "4-5-0",
     "rank": 7,
-    "win_prob": 0.99
+    "win_prob": 1.0
    },
    "status": "in_progress"
   },
@@ -76,7 +76,7 @@
     "pts": 126.22,
     "rec": "4-5-0",
     "rank": 9,
-    "win_prob": 0.99
+    "win_prob": 1.0
    },
    "b": {
     "tid": 5,
@@ -85,7 +85,7 @@
     "pts": 114.52,
     "rec": "4-5-0",
     "rank": 6,
-    "win_prob": 0.01
+    "win_prob": null
    },
    "status": "in_progress"
   },
@@ -94,10 +94,10 @@
     "tid": 6,
     "team": "Meet the Swifts",
     "proj": 85.54,
-    "pts": 101.86,
+    "pts": 102.66,
     "rec": "6-3-0",
     "rank": 4,
-    "win_prob": 0.99
+    "win_prob": 1.0
    },
    "b": {
     "tid": 8,
@@ -106,7 +106,7 @@
     "pts": 90.82,
     "rec": "6-3-0",
     "rank": 2,
-    "win_prob": 0.01
+    "win_prob": null
    },
    "status": "in_progress"
   },
@@ -118,7 +118,7 @@
     "pts": 127.36,
     "rec": "3-6-0",
     "rank": 10,
-    "win_prob": 0.99
+    "win_prob": 1.0
    },
    "b": {
     "tid": 11,
@@ -127,7 +127,7 @@
     "pts": 58.68,
     "rec": "2-7-0",
     "rank": 12,
-    "win_prob": 0.01
+    "win_prob": null
    },
    "status": "in_progress"
   }
