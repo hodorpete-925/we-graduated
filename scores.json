@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 16 7:21 AM EST",
+ "as_of": "Nov 16 8:10 PM EST",
  "season": 2026,
  "week": 10,
  "status": "in_progress",
@@ -18,7 +18,7 @@
    "b": {
     "tid": 12,
     "team": "The Process",
-    "proj": 110.01,
+    "proj": 109.83,
     "pts": 150.56,
     "rec": "4-5-0",
     "rank": 7,
@@ -39,7 +39,7 @@
    "b": {
     "tid": 7,
     "team": "No means no",
-    "proj": 98.68,
+    "proj": 98.67,
     "pts": 116.72,
     "rec": "2-7-0",
     "rank": 11,
@@ -51,7 +51,7 @@
    "a": {
     "tid": 3,
     "team": "American Red Cross",
-    "proj": 116.81,
+    "proj": 116.83,
     "pts": 152.14,
     "rec": "8-1-0",
     "rank": 1,
@@ -60,7 +60,7 @@
    "b": {
     "tid": 9,
     "team": "Ryan-0 Hydrangea-1",
-    "proj": 95.47,
+    "proj": 95.46,
     "pts": 125.34,
     "rec": "5-4-0",
     "rank": 5,
@@ -72,11 +72,11 @@
    "a": {
     "tid": 4,
     "team": "Foster!AussieForTD",
-    "proj": 101.23,
+    "proj": 101.27,
     "pts": 118.72,
     "rec": "4-5-0",
     "rank": 9,
-    "win_prob": 0.98
+    "win_prob": 0.97
    },
    "b": {
     "tid": 5,
@@ -85,7 +85,7 @@
     "pts": 114.52,
     "rec": "4-5-0",
     "rank": 6,
-    "win_prob": 0.02
+    "win_prob": 0.03
    },
    "status": "in_progress"
   },
@@ -114,7 +114,7 @@
    "a": {
     "tid": 10,
     "team": "Sharty Waffles",
-    "proj": 95.53,
+    "proj": 95.6,
     "pts": 113.36,
     "rec": "3-6-0",
     "rank": 10,
