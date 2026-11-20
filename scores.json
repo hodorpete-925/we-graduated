@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 19 11:10 PM EST",
+ "as_of": "Nov 20 12:10 AM EST",
  "season": 2026,
  "week": 11,
  "status": "in_progress",
@@ -9,20 +9,20 @@
    "a": {
     "tid": 1,
     "team": "Buffalo Bills+",
-    "proj": 99.7,
+    "proj": 99.71,
     "pts": 0.0,
     "rec": "6-4-0",
     "rank": 4,
-    "win_prob": 0.51
+    "win_prob": 0.5
    },
    "b": {
     "tid": 2,
     "team": "10 Years Later",
-    "proj": 98.21,
+    "proj": 99.61,
     "pts": 24.2,
     "rec": "4-6-0",
     "rank": 10,
-    "win_prob": 0.49
+    "win_prob": 0.5
    },
    "status": "in_progress"
   },
@@ -51,7 +51,7 @@
    "a": {
     "tid": 4,
     "team": "Foster!AussieForTD",
-    "proj": 99.85,
+    "proj": 99.87,
     "pts": 0.0,
     "rec": "5-5-0",
     "rank": 7,
@@ -60,7 +60,7 @@
    "b": {
     "tid": 11,
     "team": "The James Connor Experience",
-    "proj": 73.08,
+    "proj": 77.61,
     "pts": 0.8,
     "rec": "2-8-0",
     "rank": 12,
@@ -72,20 +72,20 @@
    "a": {
     "tid": 5,
     "team": "I Wish Joel Didn't Confirm",
-    "proj": 95.97,
+    "proj": 93.91,
     "pts": 2.2,
     "rec": "4-6-0",
     "rank": 8,
-    "win_prob": 0.47
+    "win_prob": 0.45
    },
    "b": {
     "tid": 8,
     "team": "Quinn647",
-    "proj": 99.71,
+    "proj": 99.72,
     "pts": 3.4,
     "rec": "6-4-0",
     "rank": 3,
-    "win_prob": 0.53
+    "win_prob": 0.55
    },
    "status": "in_progress"
   },
@@ -93,7 +93,7 @@
    "a": {
     "tid": 7,
     "team": "No means no",
-    "proj": 99.31,
+    "proj": 99.35,
     "pts": 5.7,
     "rec": "3-7-0",
     "rank": 11,
@@ -114,7 +114,7 @@
    "a": {
     "tid": 10,
     "team": "Sharty Waffles",
-    "proj": 103.97,
+    "proj": 103.95,
     "pts": 0.0,
     "rec": "4-6-0",
     "rank": 9,
