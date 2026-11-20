@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 19 9:10 PM EST",
+ "as_of": "Nov 19 10:10 PM EST",
  "season": 2026,
  "week": 11,
  "status": "in_progress",
@@ -9,20 +9,20 @@
    "a": {
     "tid": 1,
     "team": "Buffalo Bills+",
-    "proj": 99.62,
+    "proj": 99.67,
     "pts": 0.0,
     "rec": "6-4-0",
     "rank": 4,
-    "win_prob": 0.56
+    "win_prob": 0.52
    },
    "b": {
     "tid": 2,
     "team": "10 Years Later",
     "proj": 98.22,
-    "pts": 11.4,
+    "pts": 17.6,
     "rec": "4-6-0",
     "rank": 10,
-    "win_prob": 0.44
+    "win_prob": 0.48
    },
    "status": "in_progress"
   },
@@ -55,16 +55,16 @@
     "pts": 0.0,
     "rec": "5-5-0",
     "rank": 7,
-    "win_prob": 0.76
+    "win_prob": 0.77
    },
    "b": {
     "tid": 11,
     "team": "The James Connor Experience",
     "proj": 77.63,
-    "pts": 0.6,
+    "pts": 0.8,
     "rec": "2-8-0",
     "rank": 12,
-    "win_prob": 0.24
+    "win_prob": 0.23
    },
    "status": "in_progress"
   },
@@ -73,10 +73,10 @@
     "tid": 5,
     "team": "I Wish Joel Didn't Confirm",
     "proj": 95.92,
-    "pts": 0.0,
+    "pts": 2.2,
     "rec": "4-6-0",
     "rank": 8,
-    "win_prob": 0.43
+    "win_prob": 0.46
    },
    "b": {
     "tid": 8,
@@ -85,7 +85,7 @@
     "pts": 3.4,
     "rec": "6-4-0",
     "rank": 3,
-    "win_prob": 0.57
+    "win_prob": 0.54
    },
    "status": "in_progress"
   },
@@ -93,20 +93,20 @@
    "a": {
     "tid": 7,
     "team": "No means no",
-    "proj": 99.29,
-    "pts": 1.0,
+    "proj": 99.27,
+    "pts": 4.7,
     "rec": "3-7-0",
     "rank": 11,
-    "win_prob": 0.55
+    "win_prob": 0.62
    },
    "b": {
     "tid": 9,
     "team": "Ryan-0 Hydrangea-1",
     "proj": 85.94,
-    "pts": 15.12,
+    "pts": 16.06,
     "rec": "5-5-0",
     "rank": 6,
-    "win_prob": 0.45
+    "win_prob": 0.38
    },
    "status": "in_progress"
   },
