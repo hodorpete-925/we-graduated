@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 22 3:10 PM EST",
+ "as_of": "Nov 22 4:10 PM EST",
  "season": 2026,
  "week": 11,
  "status": "in_progress",
@@ -9,20 +9,20 @@
    "a": {
     "tid": 1,
     "team": "Buffalo Bills+",
-    "proj": 101.51,
-    "pts": 61.5,
+    "proj": 102.76,
+    "pts": 83.2,
     "rec": "6-4-0",
     "rank": 4,
-    "win_prob": 0.57
+    "win_prob": 0.76
    },
    "b": {
     "tid": 2,
     "team": "10 Years Later",
-    "proj": 103.8,
-    "pts": 69.6,
+    "proj": 104.2,
+    "pts": 81.02,
     "rec": "4-6-0",
     "rank": 10,
-    "win_prob": 0.43
+    "win_prob": 0.24
    },
    "status": "in_progress"
   },
@@ -30,20 +30,20 @@
    "a": {
     "tid": 3,
     "team": "American Red Cross",
-    "proj": 115.7,
-    "pts": 47.02,
+    "proj": 115.66,
+    "pts": 79.86,
     "rec": "9-1-0",
     "rank": 1,
-    "win_prob": 0.47
+    "win_prob": 0.79
    },
    "b": {
     "tid": 6,
     "team": "Meet the Swifts",
-    "proj": 89.51,
-    "pts": 42.3,
+    "proj": 89.5,
+    "pts": 44.7,
     "rec": "7-3-0",
     "rank": 2,
-    "win_prob": 0.53
+    "win_prob": 0.21
    },
    "status": "in_progress"
   },
@@ -51,20 +51,20 @@
    "a": {
     "tid": 4,
     "team": "Foster!AussieForTD",
-    "proj": 101.16,
-    "pts": 63.72,
+    "proj": 101.17,
+    "pts": 79.16,
     "rec": "5-5-0",
     "rank": 7,
-    "win_prob": 0.94
+    "win_prob": 0.96
    },
    "b": {
     "tid": 11,
     "team": "The James Connor Experience",
-    "proj": 79.69,
-    "pts": 23.7,
+    "proj": 79.7,
+    "pts": 37.4,
     "rec": "2-8-0",
     "rank": 12,
-    "win_prob": 0.06
+    "win_prob": 0.04
    },
    "status": "in_progress"
   },
@@ -73,19 +73,19 @@
     "tid": 5,
     "team": "I Wish Joel Didn't Confirm",
     "proj": 99.68,
-    "pts": 52.14,
+    "pts": 76.6,
     "rec": "4-6-0",
     "rank": 8,
-    "win_prob": 0.72
+    "win_prob": 0.88
    },
    "b": {
     "tid": 8,
     "team": "Quinn647",
-    "proj": 98.5,
-    "pts": 51.52,
+    "proj": 98.47,
+    "pts": 54.64,
     "rec": "6-4-0",
     "rank": 3,
-    "win_prob": 0.28
+    "win_prob": 0.12
    },
    "status": "in_progress"
   },
@@ -93,20 +93,20 @@
    "a": {
     "tid": 7,
     "team": "No means no",
-    "proj": 103.24,
-    "pts": 67.04,
+    "proj": 103.27,
+    "pts": 79.06,
     "rec": "3-7-0",
     "rank": 11,
-    "win_prob": 0.78
+    "win_prob": 0.83
    },
    "b": {
     "tid": 9,
     "team": "Ryan-0 Hydrangea-1",
-    "proj": 86.66,
-    "pts": 42.66,
+    "proj": 86.05,
+    "pts": 55.06,
     "rec": "5-5-0",
     "rank": 6,
-    "win_prob": 0.22
+    "win_prob": 0.17
    },
    "status": "in_progress"
   },
@@ -114,20 +114,20 @@
    "a": {
     "tid": 10,
     "team": "Sharty Waffles",
-    "proj": 104.08,
-    "pts": 40.7,
+    "proj": 104.14,
+    "pts": 53.2,
     "rec": "4-6-0",
     "rank": 9,
-    "win_prob": 0.48
+    "win_prob": 0.56
    },
    "b": {
     "tid": 12,
     "team": "The Process",
-    "proj": 110.17,
-    "pts": 22.7,
+    "proj": 110.18,
+    "pts": 29.1,
     "rec": "5-5-0",
     "rank": 5,
-    "win_prob": 0.52
+    "win_prob": 0.44
    },
    "status": "in_progress"
   }
