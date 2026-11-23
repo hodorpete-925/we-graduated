@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 22 9:10 PM EST",
+ "as_of": "Nov 22 10:10 PM EST",
  "season": 2026,
  "week": 11,
  "status": "in_progress",
@@ -10,10 +10,10 @@
     "tid": 1,
     "team": "Buffalo Bills+",
     "proj": 102.73,
-    "pts": 97.24,
+    "pts": 98.04,
     "rec": "6-4-0",
     "rank": 4,
-    "win_prob": 0.7
+    "win_prob": 0.65
    },
    "b": {
     "tid": 2,
@@ -22,7 +22,7 @@
     "pts": 89.92,
     "rec": "4-6-0",
     "rank": 10,
-    "win_prob": 0.3
+    "win_prob": 0.35
    },
    "status": "in_progress"
   },
@@ -40,7 +40,7 @@
     "tid": 6,
     "team": "Meet the Swifts",
     "proj": 89.08,
-    "pts": 68.44,
+    "pts": 73.84,
     "rec": "7-3-0",
     "rank": 2,
     "win_prob": 0.19
@@ -52,7 +52,7 @@
     "tid": 4,
     "team": "Foster!AussieForTD",
     "proj": 101.11,
-    "pts": 88.06,
+    "pts": 88.46,
     "rec": "5-5-0",
     "rank": 7,
     "win_prob": 0.99
@@ -73,7 +73,7 @@
     "tid": 5,
     "team": "I Wish Joel Didn't Confirm",
     "proj": 99.65,
-    "pts": 115.6,
+    "pts": 122.1,
     "rec": "4-6-0",
     "rank": 8,
     "win_prob": 0.99
@@ -82,7 +82,7 @@
     "tid": 8,
     "team": "Quinn647",
     "proj": 98.4,
-    "pts": 67.04,
+    "pts": 67.34,
     "rec": "6-4-0",
     "rank": 3,
     "win_prob": 0.01
@@ -118,16 +118,16 @@
     "pts": 66.4,
     "rec": "4-6-0",
     "rank": 9,
-    "win_prob": 0.56
+    "win_prob": 0.4
    },
    "b": {
     "tid": 12,
     "team": "The Process",
     "proj": 110.19,
-    "pts": 48.8,
+    "pts": 63.4,
     "rec": "5-5-0",
     "rank": 5,
-    "win_prob": 0.44
+    "win_prob": 0.6
    },
    "status": "in_progress"
   }
