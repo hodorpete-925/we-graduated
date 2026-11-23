@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 22 8:10 PM EST",
+ "as_of": "Nov 22 9:10 PM EST",
  "season": 2026,
  "week": 11,
  "status": "in_progress",
@@ -9,11 +9,11 @@
    "a": {
     "tid": 1,
     "team": "Buffalo Bills+",
-    "proj": 102.75,
-    "pts": 94.34,
+    "proj": 102.73,
+    "pts": 97.24,
     "rec": "6-4-0",
     "rank": 4,
-    "win_prob": 0.68
+    "win_prob": 0.7
    },
    "b": {
     "tid": 2,
@@ -22,7 +22,7 @@
     "pts": 89.92,
     "rec": "4-6-0",
     "rank": 10,
-    "win_prob": 0.32
+    "win_prob": 0.3
    },
    "status": "in_progress"
   },
@@ -34,16 +34,16 @@
     "pts": 83.36,
     "rec": "9-1-0",
     "rank": 1,
-    "win_prob": 0.89
+    "win_prob": 0.81
    },
    "b": {
     "tid": 6,
     "team": "Meet the Swifts",
     "proj": 89.08,
-    "pts": 46.3,
+    "pts": 68.44,
     "rec": "7-3-0",
     "rank": 2,
-    "win_prob": 0.11
+    "win_prob": 0.19
    },
    "status": "in_progress"
   },
@@ -51,8 +51,8 @@
    "a": {
     "tid": 4,
     "team": "Foster!AussieForTD",
-    "proj": 101.12,
-    "pts": 84.46,
+    "proj": 101.11,
+    "pts": 88.06,
     "rec": "5-5-0",
     "rank": 7,
     "win_prob": 0.99
@@ -72,8 +72,8 @@
    "a": {
     "tid": 5,
     "team": "I Wish Joel Didn't Confirm",
-    "proj": 99.68,
-    "pts": 114.6,
+    "proj": 99.65,
+    "pts": 115.6,
     "rec": "4-6-0",
     "rank": 8,
     "win_prob": 0.99
@@ -81,8 +81,8 @@
    "b": {
     "tid": 8,
     "team": "Quinn647",
-    "proj": 98.41,
-    "pts": 66.14,
+    "proj": 98.4,
+    "pts": 67.04,
     "rec": "6-4-0",
     "rank": 3,
     "win_prob": 0.01
@@ -93,20 +93,20 @@
    "a": {
     "tid": 7,
     "team": "No means no",
-    "proj": 103.24,
-    "pts": 85.16,
+    "proj": 103.25,
+    "pts": 99.66,
     "rec": "3-7-0",
     "rank": 11,
-    "win_prob": 0.96
+    "win_prob": 0.99
    },
    "b": {
     "tid": 9,
     "team": "Ryan-0 Hydrangea-1",
     "proj": 86.08,
-    "pts": 59.96,
+    "pts": 62.46,
     "rec": "5-5-0",
     "rank": 6,
-    "win_prob": 0.04
+    "win_prob": 0.01
    },
    "status": "in_progress"
   },
@@ -118,16 +118,16 @@
     "pts": 66.4,
     "rec": "4-6-0",
     "rank": 9,
-    "win_prob": 0.45
+    "win_prob": 0.56
    },
    "b": {
     "tid": 12,
     "team": "The Process",
-    "proj": 110.11,
-    "pts": 39.4,
+    "proj": 110.19,
+    "pts": 48.8,
     "rec": "5-5-0",
     "rank": 5,
-    "win_prob": 0.55
+    "win_prob": 0.44
    },
    "status": "in_progress"
   }
