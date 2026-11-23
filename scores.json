@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 23 12:10 AM EST",
+ "as_of": "Nov 23 7:21 AM EST",
  "season": 2026,
  "week": 11,
  "status": "in_progress",
@@ -9,7 +9,7 @@
    "a": {
     "tid": 1,
     "team": "Buffalo Bills+",
-    "proj": 102.73,
+    "proj": 102.7,
     "pts": 101.04,
     "rec": "6-4-0",
     "rank": 4,
@@ -18,7 +18,7 @@
    "b": {
     "tid": 2,
     "team": "10 Years Later",
-    "proj": 104.16,
+    "proj": 103.92,
     "pts": 89.92,
     "rec": "4-6-0",
     "rank": 10,
@@ -30,7 +30,7 @@
    "a": {
     "tid": 3,
     "team": "American Red Cross",
-    "proj": 115.58,
+    "proj": 115.52,
     "pts": 83.36,
     "rec": "9-1-0",
     "rank": 1,
@@ -39,7 +39,7 @@
    "b": {
     "tid": 6,
     "team": "Meet the Swifts",
-    "proj": 89.08,
+    "proj": 89.21,
     "pts": 78.5,
     "rec": "7-3-0",
     "rank": 2,
@@ -51,7 +51,7 @@
    "a": {
     "tid": 4,
     "team": "Foster!AussieForTD",
-    "proj": 101.09,
+    "proj": 101.06,
     "pts": 89.96,
     "rec": "5-5-0",
     "rank": 7,
@@ -60,7 +60,7 @@
    "b": {
     "tid": 11,
     "team": "The James Connor Experience",
-    "proj": 79.71,
+    "proj": 79.69,
     "pts": 67.84,
     "rec": "2-8-0",
     "rank": 12,
@@ -72,7 +72,7 @@
    "a": {
     "tid": 5,
     "team": "I Wish Joel Didn't Confirm",
-    "proj": 99.65,
+    "proj": 99.61,
     "pts": 124.2,
     "rec": "4-6-0",
     "rank": 8,
@@ -81,7 +81,7 @@
    "b": {
     "tid": 8,
     "team": "Quinn647",
-    "proj": 98.34,
+    "proj": 98.43,
     "pts": 69.84,
     "rec": "6-4-0",
     "rank": 3,
@@ -93,7 +93,7 @@
    "a": {
     "tid": 7,
     "team": "No means no",
-    "proj": 103.22,
+    "proj": 102.96,
     "pts": 100.56,
     "rec": "3-7-0",
     "rank": 11,
@@ -102,7 +102,7 @@
    "b": {
     "tid": 9,
     "team": "Ryan-0 Hydrangea-1",
-    "proj": 86.03,
+    "proj": 85.97,
     "pts": 64.66,
     "rec": "5-5-0",
     "rank": 6,
@@ -114,7 +114,7 @@
    "a": {
     "tid": 10,
     "team": "Sharty Waffles",
-    "proj": 103.92,
+    "proj": 103.86,
     "pts": 66.4,
     "rec": "4-6-0",
     "rank": 9,
@@ -123,7 +123,7 @@
    "b": {
     "tid": 12,
     "team": "The Process",
-    "proj": 110.1,
+    "proj": 110.27,
     "pts": 75.6,
     "rec": "5-5-0",
     "rank": 5,
