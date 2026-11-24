@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 23 8:10 PM EST",
+ "as_of": "Nov 23 9:10 PM EST",
  "season": 2026,
  "week": 11,
  "status": "in_progress",
@@ -13,16 +13,16 @@
     "pts": 101.04,
     "rec": "6-4-0",
     "rank": 4,
-    "win_prob": 0.58
+    "win_prob": 0.62
    },
    "b": {
     "tid": 2,
     "team": "10 Years Later",
     "proj": 103.97,
-    "pts": 89.92,
+    "pts": 93.72,
     "rec": "4-6-0",
     "rank": 10,
-    "win_prob": 0.42
+    "win_prob": 0.38
    },
    "status": "in_progress"
   },
@@ -31,7 +31,7 @@
     "tid": 3,
     "team": "American Red Cross",
     "proj": 115.6,
-    "pts": 83.36,
+    "pts": 85.36,
     "rec": "9-1-0",
     "rank": 1,
     "win_prob": 0.91
@@ -61,7 +61,7 @@
     "tid": 11,
     "team": "The James Connor Experience",
     "proj": 75.2,
-    "pts": 67.84,
+    "pts": 70.14,
     "rec": "2-8-0",
     "rank": 12,
     "win_prob": 0.01
@@ -94,7 +94,7 @@
     "tid": 7,
     "team": "No means no",
     "proj": 102.96,
-    "pts": 100.56,
+    "pts": 102.56,
     "rec": "3-7-0",
     "rank": 11,
     "win_prob": 0.99
@@ -103,7 +103,7 @@
     "tid": 9,
     "team": "Ryan-0 Hydrangea-1",
     "proj": 86.09,
-    "pts": 64.66,
+    "pts": 67.96,
     "rec": "5-5-0",
     "rank": 6,
     "win_prob": 0.01
@@ -115,19 +115,19 @@
     "tid": 10,
     "team": "Sharty Waffles",
     "proj": 104.08,
-    "pts": 66.4,
+    "pts": 70.36,
     "rec": "4-6-0",
     "rank": 9,
-    "win_prob": 0.37
+    "win_prob": 0.39
    },
    "b": {
     "tid": 12,
     "team": "The Process",
     "proj": 110.43,
-    "pts": 75.6,
+    "pts": 76.3,
     "rec": "5-5-0",
     "rank": 5,
-    "win_prob": 0.63
+    "win_prob": 0.61
    },
    "status": "in_progress"
   }
