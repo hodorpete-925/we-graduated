@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 23 9:10 PM EST",
+ "as_of": "Nov 23 10:10 PM EST",
  "season": 2026,
  "week": 11,
  "status": "in_progress",
@@ -13,16 +13,16 @@
     "pts": 101.04,
     "rec": "6-4-0",
     "rank": 4,
-    "win_prob": 0.62
+    "win_prob": 0.72
    },
    "b": {
     "tid": 2,
     "team": "10 Years Later",
     "proj": 103.97,
-    "pts": 93.72,
+    "pts": 94.72,
     "rec": "4-6-0",
     "rank": 10,
-    "win_prob": 0.38
+    "win_prob": 0.28
    },
    "status": "in_progress"
   },
@@ -52,7 +52,7 @@
     "tid": 4,
     "team": "Foster!AussieForTD",
     "proj": 101.1,
-    "pts": 89.96,
+    "pts": 90.96,
     "rec": "5-5-0",
     "rank": 7,
     "win_prob": 0.99
@@ -82,7 +82,7 @@
     "tid": 8,
     "team": "Quinn647",
     "proj": 98.49,
-    "pts": 69.84,
+    "pts": 78.94,
     "rec": "6-4-0",
     "rank": 3,
     "win_prob": 0.01
@@ -103,7 +103,7 @@
     "tid": 9,
     "team": "Ryan-0 Hydrangea-1",
     "proj": 86.09,
-    "pts": 67.96,
+    "pts": 72.66,
     "rec": "5-5-0",
     "rank": 6,
     "win_prob": 0.01
@@ -115,19 +115,19 @@
     "tid": 10,
     "team": "Sharty Waffles",
     "proj": 104.08,
-    "pts": 70.36,
+    "pts": 81.24,
     "rec": "4-6-0",
     "rank": 9,
-    "win_prob": 0.39
+    "win_prob": 0.34
    },
    "b": {
     "tid": 12,
     "team": "The Process",
     "proj": 110.43,
-    "pts": 76.3,
+    "pts": 87.6,
     "rec": "5-5-0",
     "rank": 5,
-    "win_prob": 0.61
+    "win_prob": 0.66
    },
    "status": "in_progress"
   }
