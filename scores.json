@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 23 10:10 PM EST",
+ "as_of": "Nov 23 11:10 PM EST",
  "season": 2026,
  "week": 11,
  "status": "in_progress",
@@ -13,16 +13,16 @@
     "pts": 101.04,
     "rec": "6-4-0",
     "rank": 4,
-    "win_prob": 0.72
+    "win_prob": 0.99
    },
    "b": {
     "tid": 2,
     "team": "10 Years Later",
     "proj": 103.97,
-    "pts": 94.72,
+    "pts": 95.72,
     "rec": "4-6-0",
     "rank": 10,
-    "win_prob": 0.28
+    "win_prob": 0.01
    },
    "status": "in_progress"
   },
@@ -31,10 +31,10 @@
     "tid": 3,
     "team": "American Red Cross",
     "proj": 115.6,
-    "pts": 85.36,
+    "pts": 86.46,
     "rec": "9-1-0",
     "rank": 1,
-    "win_prob": 0.91
+    "win_prob": 0.99
    },
    "b": {
     "tid": 6,
@@ -43,7 +43,7 @@
     "pts": 78.5,
     "rec": "7-3-0",
     "rank": 2,
-    "win_prob": 0.09
+    "win_prob": 0.01
    },
    "status": "in_progress"
   },
@@ -52,7 +52,7 @@
     "tid": 4,
     "team": "Foster!AussieForTD",
     "proj": 101.1,
-    "pts": 90.96,
+    "pts": 94.46,
     "rec": "5-5-0",
     "rank": 7,
     "win_prob": 0.99
@@ -61,7 +61,7 @@
     "tid": 11,
     "team": "The James Connor Experience",
     "proj": 75.2,
-    "pts": 70.14,
+    "pts": 73.64,
     "rec": "2-8-0",
     "rank": 12,
     "win_prob": 0.01
@@ -82,7 +82,7 @@
     "tid": 8,
     "team": "Quinn647",
     "proj": 98.49,
-    "pts": 78.94,
+    "pts": 80.14,
     "rec": "6-4-0",
     "rank": 3,
     "win_prob": 0.01
@@ -94,7 +94,7 @@
     "tid": 7,
     "team": "No means no",
     "proj": 102.96,
-    "pts": 102.56,
+    "pts": 104.16,
     "rec": "3-7-0",
     "rank": 11,
     "win_prob": 0.99
@@ -103,7 +103,7 @@
     "tid": 9,
     "team": "Ryan-0 Hydrangea-1",
     "proj": 86.09,
-    "pts": 72.66,
+    "pts": 80.06,
     "rec": "5-5-0",
     "rank": 6,
     "win_prob": 0.01
@@ -115,19 +115,19 @@
     "tid": 10,
     "team": "Sharty Waffles",
     "proj": 104.08,
-    "pts": 81.24,
+    "pts": 93.3,
     "rec": "4-6-0",
     "rank": 9,
-    "win_prob": 0.34
+    "win_prob": 0.15
    },
    "b": {
     "tid": 12,
     "team": "The Process",
     "proj": 110.43,
-    "pts": 87.6,
+    "pts": 96.7,
     "rec": "5-5-0",
     "rank": 5,
-    "win_prob": 0.66
+    "win_prob": 0.85
    },
    "status": "in_progress"
   }
