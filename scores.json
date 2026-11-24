@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 23 11:10 PM EST",
+ "as_of": "Nov 24 12:10 AM EST",
  "season": 2026,
  "week": 11,
  "status": "in_progress",
@@ -13,16 +13,16 @@
     "pts": 101.04,
     "rec": "6-4-0",
     "rank": 4,
-    "win_prob": 0.99
+    "win_prob": null
    },
    "b": {
     "tid": 2,
     "team": "10 Years Later",
     "proj": 103.97,
-    "pts": 95.72,
+    "pts": 101.32,
     "rec": "4-6-0",
     "rank": 10,
-    "win_prob": 0.01
+    "win_prob": 1.0
    },
    "status": "in_progress"
   },
@@ -34,7 +34,7 @@
     "pts": 86.46,
     "rec": "9-1-0",
     "rank": 1,
-    "win_prob": 0.99
+    "win_prob": 1.0
    },
    "b": {
     "tid": 6,
@@ -43,7 +43,7 @@
     "pts": 78.5,
     "rec": "7-3-0",
     "rank": 2,
-    "win_prob": 0.01
+    "win_prob": null
    },
    "status": "in_progress"
   },
@@ -55,16 +55,16 @@
     "pts": 94.46,
     "rec": "5-5-0",
     "rank": 7,
-    "win_prob": 0.99
+    "win_prob": 1.0
    },
    "b": {
     "tid": 11,
     "team": "The James Connor Experience",
     "proj": 75.2,
-    "pts": 73.64,
+    "pts": 80.04,
     "rec": "2-8-0",
     "rank": 12,
-    "win_prob": 0.01
+    "win_prob": null
    },
    "status": "in_progress"
   },
@@ -76,7 +76,7 @@
     "pts": 124.2,
     "rec": "4-6-0",
     "rank": 8,
-    "win_prob": 0.99
+    "win_prob": 1.0
    },
    "b": {
     "tid": 8,
@@ -85,7 +85,7 @@
     "pts": 80.14,
     "rec": "6-4-0",
     "rank": 3,
-    "win_prob": 0.01
+    "win_prob": null
    },
    "status": "in_progress"
   },
@@ -97,7 +97,7 @@
     "pts": 104.16,
     "rec": "3-7-0",
     "rank": 11,
-    "win_prob": 0.99
+    "win_prob": 1.0
    },
    "b": {
     "tid": 9,
@@ -106,7 +106,7 @@
     "pts": 80.06,
     "rec": "5-5-0",
     "rank": 6,
-    "win_prob": 0.01
+    "win_prob": null
    },
    "status": "in_progress"
   },
@@ -118,16 +118,16 @@
     "pts": 93.3,
     "rec": "4-6-0",
     "rank": 9,
-    "win_prob": 0.15
+    "win_prob": null
    },
    "b": {
     "tid": 12,
     "team": "The Process",
     "proj": 110.43,
-    "pts": 96.7,
+    "pts": 99.26,
     "rec": "5-5-0",
     "rank": 5,
-    "win_prob": 0.85
+    "win_prob": 1.0
    },
    "status": "in_progress"
   }
