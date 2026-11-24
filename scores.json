@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 23 7:21 AM EST",
+ "as_of": "Nov 23 8:10 PM EST",
  "season": 2026,
  "week": 11,
  "status": "in_progress",
@@ -9,7 +9,7 @@
    "a": {
     "tid": 1,
     "team": "Buffalo Bills+",
-    "proj": 102.7,
+    "proj": 102.73,
     "pts": 101.04,
     "rec": "6-4-0",
     "rank": 4,
@@ -18,7 +18,7 @@
    "b": {
     "tid": 2,
     "team": "10 Years Later",
-    "proj": 103.92,
+    "proj": 103.97,
     "pts": 89.92,
     "rec": "4-6-0",
     "rank": 10,
@@ -30,7 +30,7 @@
    "a": {
     "tid": 3,
     "team": "American Red Cross",
-    "proj": 115.52,
+    "proj": 115.6,
     "pts": 83.36,
     "rec": "9-1-0",
     "rank": 1,
@@ -51,7 +51,7 @@
    "a": {
     "tid": 4,
     "team": "Foster!AussieForTD",
-    "proj": 101.06,
+    "proj": 101.1,
     "pts": 89.96,
     "rec": "5-5-0",
     "rank": 7,
@@ -60,7 +60,7 @@
    "b": {
     "tid": 11,
     "team": "The James Connor Experience",
-    "proj": 79.69,
+    "proj": 75.2,
     "pts": 67.84,
     "rec": "2-8-0",
     "rank": 12,
@@ -72,7 +72,7 @@
    "a": {
     "tid": 5,
     "team": "I Wish Joel Didn't Confirm",
-    "proj": 99.61,
+    "proj": 99.58,
     "pts": 124.2,
     "rec": "4-6-0",
     "rank": 8,
@@ -81,7 +81,7 @@
    "b": {
     "tid": 8,
     "team": "Quinn647",
-    "proj": 98.43,
+    "proj": 98.49,
     "pts": 69.84,
     "rec": "6-4-0",
     "rank": 3,
@@ -102,7 +102,7 @@
    "b": {
     "tid": 9,
     "team": "Ryan-0 Hydrangea-1",
-    "proj": 85.97,
+    "proj": 86.09,
     "pts": 64.66,
     "rec": "5-5-0",
     "rank": 6,
@@ -114,7 +114,7 @@
    "a": {
     "tid": 10,
     "team": "Sharty Waffles",
-    "proj": 103.86,
+    "proj": 104.08,
     "pts": 66.4,
     "rec": "4-6-0",
     "rank": 9,
@@ -123,7 +123,7 @@
    "b": {
     "tid": 12,
     "team": "The Process",
-    "proj": 110.27,
+    "proj": 110.43,
     "pts": 75.6,
     "rec": "5-5-0",
     "rank": 5,
