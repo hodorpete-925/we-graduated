@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 27 1:26 PM EST",
+ "as_of": "Nov 27 2:23 PM EST",
  "season": 2026,
  "week": 12,
  "status": "in_progress",
@@ -9,7 +9,7 @@
    "a": {
     "tid": 1,
     "team": "Buffalo Bills+",
-    "proj": 108.81,
+    "proj": 108.72,
     "pts": 31.3,
     "rec": "6-5-0",
     "rank": 5,
@@ -30,7 +30,7 @@
    "a": {
     "tid": 2,
     "team": "10 Years Later",
-    "proj": 99.29,
+    "proj": 99.28,
     "pts": 26.0,
     "rec": "5-6-0",
     "rank": 9,
@@ -39,7 +39,7 @@
    "b": {
     "tid": 10,
     "team": "Sharty Waffles",
-    "proj": 101.26,
+    "proj": 101.13,
     "pts": 40.7,
     "rec": "4-7-0",
     "rank": 10,
@@ -51,7 +51,7 @@
    "a": {
     "tid": 3,
     "team": "American Red Cross",
-    "proj": 109.96,
+    "proj": 109.92,
     "pts": 56.04,
     "rec": "10-1-0",
     "rank": 1,
@@ -60,8 +60,8 @@
    "b": {
     "tid": 8,
     "team": "Quinn647",
-    "proj": 109.08,
-    "pts": 34.4,
+    "proj": 109.05,
+    "pts": 36.0,
     "rec": "6-5-0",
     "rank": 4,
     "win_prob": 0.54
@@ -72,8 +72,8 @@
    "a": {
     "tid": 4,
     "team": "Foster!AussieForTD",
-    "proj": 98.5,
-    "pts": 20.32,
+    "proj": 98.41,
+    "pts": 21.32,
     "rec": "6-5-0",
     "rank": 6,
     "win_prob": 0.22
@@ -81,7 +81,7 @@
    "b": {
     "tid": 12,
     "team": "The Process",
-    "proj": 110.8,
+    "proj": 110.4,
     "pts": 14.6,
     "rec": "6-5-0",
     "rank": 3,
@@ -93,20 +93,20 @@
    "a": {
     "tid": 5,
     "team": "I Wish Joel Didn't Confirm",
-    "proj": 113.68,
-    "pts": 55.44,
+    "proj": 113.82,
+    "pts": 55.04,
     "rec": "5-6-0",
     "rank": 7,
-    "win_prob": 0.93
+    "win_prob": 0.92
    },
    "b": {
     "tid": 11,
     "team": "The James Connor Experience",
-    "proj": 82.15,
-    "pts": 18.5,
+    "proj": 82.05,
+    "pts": 19.6,
     "rec": "2-9-0",
     "rank": 12,
-    "win_prob": 0.07
+    "win_prob": 0.08
    },
    "status": "in_progress"
   },
@@ -123,8 +123,8 @@
    "b": {
     "tid": 7,
     "team": "No means no",
-    "proj": 94.64,
-    "pts": 8.56,
+    "proj": 94.65,
+    "pts": 18.56,
     "rec": "4-7-0",
     "rank": 11,
     "win_prob": 0.01
