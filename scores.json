@@ -1,5 +1,5 @@
 {
- "as_of": "Nov 27 11:03 AM EST",
+ "as_of": "Nov 27 1:24 PM EST",
  "season": 2026,
  "week": 12,
  "status": "in_progress",
@@ -9,7 +9,7 @@
    "a": {
     "tid": 1,
     "team": "Buffalo Bills+",
-    "proj": 108.59,
+    "proj": 108.81,
     "pts": 31.3,
     "rec": "6-5-0",
     "rank": 5,
@@ -18,7 +18,7 @@
    "b": {
     "tid": 9,
     "team": "Ryan-0 Hydrangea-1",
-    "proj": 93.05,
+    "proj": 93.44,
     "pts": 19.6,
     "rec": "5-6-0",
     "rank": 8,
@@ -30,20 +30,20 @@
    "a": {
     "tid": 2,
     "team": "10 Years Later",
-    "proj": 99.32,
+    "proj": 99.29,
     "pts": 26.0,
     "rec": "5-6-0",
     "rank": 9,
-    "win_prob": 0.31
+    "win_prob": 0.32
    },
    "b": {
     "tid": 10,
     "team": "Sharty Waffles",
-    "proj": 101.56,
+    "proj": 101.26,
     "pts": 40.7,
     "rec": "4-7-0",
     "rank": 10,
-    "win_prob": 0.69
+    "win_prob": 0.68
    },
    "status": "in_progress"
   },
@@ -51,7 +51,7 @@
    "a": {
     "tid": 3,
     "team": "American Red Cross",
-    "proj": 109.92,
+    "proj": 109.96,
     "pts": 56.04,
     "rec": "10-1-0",
     "rank": 1,
@@ -60,7 +60,7 @@
    "b": {
     "tid": 8,
     "team": "Quinn647",
-    "proj": 109.0,
+    "proj": 109.08,
     "pts": 34.4,
     "rec": "6-5-0",
     "rank": 4,
@@ -72,7 +72,7 @@
    "a": {
     "tid": 4,
     "team": "Foster!AussieForTD",
-    "proj": 98.64,
+    "proj": 98.5,
     "pts": 20.32,
     "rec": "6-5-0",
     "rank": 6,
@@ -81,7 +81,7 @@
    "b": {
     "tid": 12,
     "team": "The Process",
-    "proj": 110.97,
+    "proj": 110.8,
     "pts": 14.6,
     "rec": "6-5-0",
     "rank": 3,
@@ -93,7 +93,7 @@
    "a": {
     "tid": 5,
     "team": "I Wish Joel Didn't Confirm",
-    "proj": 113.6,
+    "proj": 113.68,
     "pts": 55.44,
     "rec": "5-6-0",
     "rank": 7,
@@ -102,7 +102,7 @@
    "b": {
     "tid": 11,
     "team": "The James Connor Experience",
-    "proj": 81.79,
+    "proj": 82.15,
     "pts": 18.5,
     "rec": "2-9-0",
     "rank": 12,
@@ -114,7 +114,7 @@
    "a": {
     "tid": 6,
     "team": "Meet the Swifts",
-    "proj": 94.81,
+    "proj": 94.84,
     "pts": 93.8,
     "rec": "7-4-0",
     "rank": 2,
@@ -123,7 +123,7 @@
    "b": {
     "tid": 7,
     "team": "No means no",
-    "proj": 94.72,
+    "proj": 94.64,
     "pts": 8.56,
     "rec": "4-7-0",
     "rank": 11,
